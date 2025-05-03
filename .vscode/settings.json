@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "172.30.128.1",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "database",
+            "database": "seed",
+            "username": "root",
+            "group": "CIFOPE",
+            "password": ""
+        }
+    ]
+}

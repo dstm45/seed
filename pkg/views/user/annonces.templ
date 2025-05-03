@@ -1,0 +1,13 @@
+package user
+
+import "github.com/dstm45/seed/pkg/views/base"
+
+templ Annonces(username string) {
+    @base.Base("Annonces") {
+        <div x-data>
+            <div x-show="$store.shared.open" @click.outside="$store.shared.open = false">
+                Annonces de {username}<i class="fas fa-eye"></i>
+            </div>
+        </div>
+    }
+}
