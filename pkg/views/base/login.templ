@@ -1,0 +1,23 @@
+package base
+
+templ Login() {
+    <div class="container my-auto mx-auto">
+        @GroupForms("post") {
+            @Form("email", "email") 
+            @Form("mot de passe", "password") 
+        }
+    </div>
+}
+
+templ Connexion() {
+    <div class="container my-auto mx-auto">
+        @GroupForms("post") {
+            @Form("nom", "text") 
+            @Form("postnom", "text") 
+            @Form("prenom", "text") 
+            @Form("email", "email") 
+            @Form("mot de passe", "password") 
+            @Form("confirmer le mot de passe", "password") 
+        } 
+    </div>
+}

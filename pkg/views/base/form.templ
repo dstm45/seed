@@ -1,0 +1,11 @@
+package base
+
+templ Form(formName, formType string) {
+    <input type={formType} name={formName}/>
+}
+
+templ GroupForms(method string) {
+    <form method={method}>
+        {children...}
+    </form>
+}

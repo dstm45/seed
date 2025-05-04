@@ -9,13 +9,34 @@ templ header() {
             });
         });
     </script>
-    <header class="bg-green-100 shadow-md">
-        <div class="container mx-auto px-4 py-5 flex justify-between items-center" x-data>
-            <button @click="$store.shared.open = !$store.shared.open" class="ml-[-8%]"><i class="ph-fill ph-user-circle text-4xl"></i></button>
-            <div class="ml-auto text-2xl font-bold text-gray-800"><i class="ph-fill ph-plant"></i>Seed</div>
+    <header class="bg-green-200 shadow-md">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center" x-data>
+            <button @click="$store.shared.open = !$store.shared.open" class="ml-[-8%]" aria-label="Toggle menu">
+                <i class="ph-fill ph-user-circle text-5xl" style="color: rgb(30, 41, 57)"></i>
+            </button>
+            <nav class="container ml-[40%] mr-[40%] flex flex-row">
+                <ul class="flex space-x-4">
+                    <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
+                        <a href="#">annonces</a>
+                    </li>
+                    <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
+                        <a href="#">dashboard</a>
+                    </li>
+                    <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
+                        <a href="#">commandes</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="mr-[-8%] text-4xl font-bold text-gray-800">
+                <a href="#"><i class="ph-fill ph-plant"></i>Seed</a>
+            </div>
         </div>
     </header>
 }
+templ Footer() {
+
+}
+
 templ Base(title string) {
     <!DOCTYPE html>
     <html lang="fr" class="h-full">
@@ -25,11 +46,6 @@ templ Base(title string) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-        />
         <link
             rel="stylesheet"
             type="text/css"
