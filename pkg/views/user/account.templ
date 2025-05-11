@@ -1,0 +1,9 @@
+package user
+
+templ UserAccount(user string) {
+    <div x-data>
+        <div x-show="$store.shared.open" @click.outside="$store.shared.open = false">
+            compte de {user} 
+        </div>
+    </div>
+}

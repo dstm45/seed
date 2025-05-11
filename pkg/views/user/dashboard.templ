@@ -3,7 +3,8 @@ package user
 import "github.com/dstm45/seed/pkg/views/base"
 
 templ Dashboard(username string) {
-    @base.Base("Dashboard") {
+    @base.Base("Dashboard", username) {
+        @UserAccount(username)
         <div>
                 Dashboard de {username}
         </div>

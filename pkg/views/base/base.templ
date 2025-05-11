@@ -1,7 +1,9 @@
 package base
 
+import "fmt"
 
-templ header() {
+
+templ header(username string) {
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('shared', {
@@ -17,17 +19,17 @@ templ header() {
             <nav class="container ml-[40%] mr-[40%] flex flex-row">
                 <ul class="flex space-x-4">
                     <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
-                        <a href="#">annonces</a>
+                        <a href={templ.URL(fmt.Sprintf("/user/%s/annonces", username))}>annonces</a>
                     </li>
                     <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
-                        <a href="#">dashboard</a>
+                        <a href={templ.URL(fmt.Sprintf("/user/%s/dashboard", username))}>dashboard</a>
                     </li>
                     <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
                         <a href="#">commandes</a>
                     </li>
                 </ul>
             </nav>
-            <div class="mr-[-8%] text-4xl font-bold text-gray-800">
+            <div class="mr-[-7%] text-4xl font-bold text-gray-800">
                 <a href="#"><i class="ph-fill ph-plant"></i>Seed</a>
             </div>
         </div>
@@ -37,7 +39,7 @@ templ Footer() {
 
 }
 
-templ Base(title string) {
+templ Base(title, username string) {
     <!DOCTYPE html>
     <html lang="fr" class="h-full">
 
@@ -55,7 +57,7 @@ templ Base(title string) {
     </head>
 
     <body class="min-h-screen flex flex-col bg-gray-100">
-        @header()
+        @header(username)
         <main class="flex-grow">
             {children...}
         </main>

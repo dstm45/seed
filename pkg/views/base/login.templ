@@ -1,23 +1,27 @@
 package base
 
 templ Login() {
-    <div class="container my-auto mx-auto">
+    @BaseLogin("Login") {
         @GroupForms("post") {
-            @Form("email", "email") 
-            @Form("mot de passe", "password") 
+            <p class="text-2xl font-bold flex-1">Login</p>
+            @Form("email", "email", "") 
+            @Form("mot de passe", "password", "") 
+            @Form("submit", "submit", "Se connecter")
         }
-    </div>
+    }
 }
 
-templ Connexion() {
-    <div class="container my-auto mx-auto">
+templ SignIn() {
+    @BaseLogin("Connexion") {
+        <p class="text-2xl font-bold flex-1">Connexion</p>
         @GroupForms("post") {
-            @Form("nom", "text") 
-            @Form("postnom", "text") 
-            @Form("prenom", "text") 
-            @Form("email", "email") 
-            @Form("mot de passe", "password") 
-            @Form("confirmer le mot de passe", "password") 
+            @Form("nom", "text", "") 
+            @Form("postnom", "text", "") 
+            @Form("prenom", "text", "") 
+            @Form("email", "email", "") 
+            @Form("mot de passe", "password", "") 
+            @Form("confirmer le mot de passe", "password", "") 
+            @Form("submit", "submit", "Créer un compte")
         } 
-    </div>
+    }
 }

@@ -1,11 +1,21 @@
 package base
 
-templ Form(formName, formType string) {
-    <input type={formType} name={formName}/>
+templ Form(formName, formType, submitName string) {
+    if formType == "submit" {
+        <input 
+            type={formType} value={submitName} name={formName}
+            class="w-full border-3 border-gray-800 rounded-lg p-2 mb-3 font-bold focus:outline-none mx-auto bg-gray-800 text-gray-200"
+        ><br/>
+    } else {
+        <input 
+            type={formType} name={formName} placeholder={formName}
+            class="w-full h-10 border-3 border-gray-800 rounded-lg p-1 mb-4 bg-gray-200 font-bold focus:outline-none mx-auto"
+        /><br/>
+    }
 }
 
 templ GroupForms(method string) {
-    <form method={method}>
+    <form method={method} class="flex flex-col">
         {children...}
     </form>
 }

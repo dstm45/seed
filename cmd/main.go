@@ -2,20 +2,16 @@ package main
 
 import (
 	"log"
-	"net/http"
 
-	"github.com/dstm45/seed/pkg/controllers"
+	"github.com/dstm45/seed/pkg/config"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	mux := http.NewServeMux()
-	server := http.Server{
-		Handler: mux,
-		Addr:    "0.0.0.0:8888",
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found")
 	}
-	//user routes
-	mux.HandleFunc("GET /{username}", controllers.UserIndex)
-	mux.HandleFunc("GET /{username}/annonces", controllers.UserAnnonces)
-	mux.HandleFunc("GET /{username}/dashboard", controllers.UserDashboard)
-	log.Fatalln(server.ListenAndServe())
+	server := config.NewServer()
+	server.Start()
 }
