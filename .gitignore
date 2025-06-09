@@ -4,3 +4,4 @@ makefile
 .vscode/
 pkg/views/*.go
 .env
+node_modules

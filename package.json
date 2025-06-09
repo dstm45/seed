@@ -1,0 +1,24 @@
+{
+  "name": "seed",
+  "version": "1.0.0",
+  "description": "plateforme agricole",
+  "homepage": "https://github.com/dstm45/seed#readme",
+  "bugs": {
+    "url": "https://github.com/dstm45/seed/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dstm45/seed.git"
+  },
+  "license": "ISC",
+  "author": "dstm45",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.7",
+    "tailwindcss": "^4.1.7"
+  }
+}

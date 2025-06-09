@@ -3,16 +3,18 @@ package controllers
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/dstm45/seed/pkg/database"
-	"github.com/dstm45/seed/pkg/views/base"
+	"github.com/dstm45/seed/pkg/views/authentication"
+	"github.com/go-session/session/v3"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func SignIn(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := context.Background()
 	if r.Method == http.MethodPost {
@@ -39,7 +41,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	template := base.Login()
+	template := authentication.SignIn()
 	err = template.Render(ctx, w)
 	if err != nil {
 		log.SetOutput(os.Stdout)
@@ -49,7 +51,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func SignIn(w http.ResponseWriter, r *http.Request) {
+func SignUp(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := context.Background()
 	if r.Method == http.MethodPost {
@@ -78,8 +80,17 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 			Email:        email,
 			PasswordHash: sql.NullString{String: string(hash), Valid: true},
 		})
+		store, err := session.Start(ctx, w, r)
+		if err != nil {
+			log.Println("Erreur lors de la création de la session", err)
+		}
+		if err != nil {
+			log.Println("Erreur lors du retrait de l'email", err)
+		}
+		store.Set(email, true)
+		http.Redirect(w, r, fmt.Sprintf("/user/%s", nom), http.StatusContinue)
 	}
-	template := base.SignIn()
+	template := authentication.SignUp()
 	err = template.Render(ctx, w)
 	if err != nil {
 		log.SetOutput(os.Stdout)

@@ -1,0 +1,26 @@
+package component
+
+
+templ LoginBase(title string) {
+    <!DOCTYPE html>
+    <html lang="fr" class="h-full">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
+        />
+        <title>{title}</title>
+    </head>
+
+    <body class="min-h-screen flex bg-gray-200">
+        <main class="border-3 text-gray-800 border-black p-1 rounded-lg w-200 h-120 mx-auto container p-4 my-auto bg-gray-200">
+            {children...}
+        </main>
+    </body>
+    </html>
+}

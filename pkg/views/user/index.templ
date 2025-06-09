@@ -1,10 +1,7 @@
 package user
 
-import "github.com/dstm45/seed/pkg/views/base"
+import "github.com/dstm45/seed/pkg/views/component"
 
 templ Index(username string) {
-    @base.Base("home", username){
-        @UserAccount(username)
-        <div> salut {username} </div>
-    }
+    @component.Base("", "connexion")
 }

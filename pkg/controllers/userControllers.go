@@ -16,20 +16,6 @@ func UserIndex(w http.ResponseWriter, r *http.Request) {
 	template.Render(ctx, w)
 }
 
-func UserAnnonces(w http.ResponseWriter, r *http.Request) {
-	username := r.PathValue("username")
-	template := user.Annonces(username)
-	ctx := context.Background()
-	template.Render(ctx, w)
-}
-
-func UserDashboard(w http.ResponseWriter, r *http.Request) {
-	username := r.PathValue("username")
-	template := user.Dashboard(username)
-	ctx := context.Background()
-	template.Render(ctx, w)
-}
-
 func UserLogin(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {

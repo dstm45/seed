@@ -1,0 +1,19 @@
+package user
+
+import "github.com/dstm45/seed/pkg/views/component"
+
+
+templ Evenement() {
+    @component.Base("", "Evenement"){
+        <div>
+            <img alt="affiche de l'évenement" class="affiche"/>
+            <div>
+                <p class="text-bold">Titre</p>
+                <div>Description de l'évenement</div>
+                <p>date: 22/10/2025</p>
+                // carte de l'endroit où se tiendra l'évenement avec open street maps
+            </div>
+        </div>
+        <a href="">Participer</a>
+    }
+}

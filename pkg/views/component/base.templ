@@ -1,0 +1,54 @@
+package component
+
+templ Base(role, title string) {
+    if role == "login" {
+        <!DOCTYPE html>
+        <html lang="fr" class="h-full">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <script src="/script/script.js"></script>
+            <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+            <link
+                rel="stylesheet"
+                type="text/css"
+                href="../css/output.css"
+            />
+            <link rel="stylesheet" type="text/css" href="/style/style.css"/>
+            <title>{title}</title>
+        </head>
+
+        <body class="min-h-screen flex flex-col bg-gray-100">
+            <main class="flex-grow">
+                {children...}
+            </main>
+        </body>
+        </html>
+    } else {
+        <!DOCTYPE html>
+        <html lang="fr" class="h-full">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <script src="/script/script.js"></script>
+            <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+            <link
+                rel="stylesheet"
+                type="text/css"
+                href="../css/output.css"
+            />
+            <link rel="stylesheet" type="text/css" href="/style/style.css"/>
+            <title>{title}</title>
+        </head>
+
+        <body class="min-h-screen flex flex-col bg-gray-100">
+            @header("john")
+            <main class="flex-grow">
+                {children...}
+            </main>
+        </body>
+        </html>
+    }
+}

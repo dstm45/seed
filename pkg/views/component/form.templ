@@ -1,0 +1,22 @@
+package component
+
+templ Input(name, Type, value string) {
+    <input 
+        type={Type} value={value} name={name}
+        class="w-full border-3 border-gray-800 rounded-lg p-2 mb-3 font-bold focus:outline-none mx-auto bg-gray-800 text-gray-200"
+    ><br/>
+}
+
+templ Submit(value string) {
+    <input 
+        type="submit"
+        value={value}
+        class="w-full h-10 border-3 border-gray-800 rounded-lg p-1 mb-1 bg-gray-200 font-bold focus:outline-none mx-auto"
+    /><br/>
+}
+
+templ Form(method string) {
+    <form method={method} class="flex flex-col">
+        {children...}
+    </form>
+}

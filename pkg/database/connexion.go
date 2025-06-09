@@ -8,18 +8,22 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Connection opens a MySQL database connection using environment variables
 func Connection() *Queries {
+	dsn := os.Getenv("DATABASE_URL")
+
 	// Open the database connection
-	db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		log.Fatalln("Erreur lors de la connexion à la base de données", err)
+		log.Fatalln("Erreur lors de la connexion à la base de données:", err)
 	}
+	defer db.Close()
 
 	// Verify the connection by attempting a simple query
 	if err := db.Ping(); err != nil {
-		log.Fatalln("Erreur lors de la vérification de la connexion à la base de données", err)
+		log.Fatalln("Erreur lors de la vérification de la connexion à la base de données:", err)
 	}
 
-	connection := New(db)
-	return connection
+	queries := New(db)
+	return queries
 }

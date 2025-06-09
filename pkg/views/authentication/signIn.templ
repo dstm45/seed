@@ -1,0 +1,18 @@
+package authentication
+
+import "github.com/dstm45/seed/pkg/views/component"
+
+templ SignIn() {
+    @component.LoginBase("Connexion") {
+        <p class="text-2xl font-bold flex-1">Connexion</p>
+        @component.Form("post") {
+            @component.Input("nom", "text", "Nom") 
+            @component.Input("postnom", "text", "Post-nom") 
+            @component.Input("prenom", "text", "Prénom") 
+            @component.Input("email", "email", "Adresse email") 
+            @component.Input("mot_de_passe", "password", "Mot de passe") 
+            @component.Input("confirmer_passe", "password", "confirmer le mot de passe") 
+            @component.Submit("Soumettre")
+        } 
+    }
+}

@@ -24,6 +24,9 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.getAnnoncesStmt, err = db.PrepareContext(ctx, getAnnonces); err != nil {
+		return nil, fmt.Errorf("error preparing query GetAnnonces: %w", err)
+	}
 	if q.getPasswordHashStmt, err = db.PrepareContext(ctx, getPasswordHash); err != nil {
 		return nil, fmt.Errorf("error preparing query GetPasswordHash: %w", err)
 	}
@@ -33,6 +36,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getUserIdStmt, err = db.PrepareContext(ctx, getUserId); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserId: %w", err)
 	}
+	if q.getUsersStmt, err = db.PrepareContext(ctx, getUsers); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUsers: %w", err)
+	}
 	if q.newUserStmt, err = db.PrepareContext(ctx, newUser); err != nil {
 		return nil, fmt.Errorf("error preparing query NewUser: %w", err)
 	}
@@ -41,6 +47,11 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
+	if q.getAnnoncesStmt != nil {
+		if cerr := q.getAnnoncesStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAnnoncesStmt: %w", cerr)
+		}
+	}
 	if q.getPasswordHashStmt != nil {
 		if cerr := q.getPasswordHashStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getPasswordHashStmt: %w", cerr)
@@ -54,6 +65,11 @@ func (q *Queries) Close() error {
 	if q.getUserIdStmt != nil {
 		if cerr := q.getUserIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getUserIdStmt: %w", cerr)
+		}
+	}
+	if q.getUsersStmt != nil {
+		if cerr := q.getUsersStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUsersStmt: %w", cerr)
 		}
 	}
 	if q.newUserStmt != nil {
@@ -100,9 +116,11 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 type Queries struct {
 	db                  DBTX
 	tx                  *sql.Tx
+	getAnnoncesStmt     *sql.Stmt
 	getPasswordHashStmt *sql.Stmt
 	getUserByEmailStmt  *sql.Stmt
 	getUserIdStmt       *sql.Stmt
+	getUsersStmt        *sql.Stmt
 	newUserStmt         *sql.Stmt
 }
 
@@ -110,9 +128,11 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
 		db:                  tx,
 		tx:                  tx,
+		getAnnoncesStmt:     q.getAnnoncesStmt,
 		getPasswordHashStmt: q.getPasswordHashStmt,
 		getUserByEmailStmt:  q.getUserByEmailStmt,
 		getUserIdStmt:       q.getUserIdStmt,
+		getUsersStmt:        q.getUsersStmt,
 		newUserStmt:         q.newUserStmt,
 	}
 }

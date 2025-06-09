@@ -1,0 +1,29 @@
+package component
+
+import "fmt"
+
+templ header(username string) {
+    <header class="bg-green-200 shadow-md">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center" x-data>
+            <button @click="$store.shared.open = !$store.shared.open" class="ml-[-8%]" aria-label="Toggle menu">
+                <i class="ph-fill ph-user-circle text-5xl" style="color: rgb(30, 41, 57)"></i>
+            </button>
+            <nav class="container ml-[40%] mr-[40%] flex flex-row">
+                <ul class="flex space-x-4">
+                    <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
+                        <a href={templ.URL(fmt.Sprintf("/user/%s/annonces", username))}>annonces</a>
+                    </li>
+                    <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
+                        <a href={templ.URL(fmt.Sprintf("/user/%s/dashboard", username))}>dashboard</a>
+                    </li>
+                    <li class="font-bold text-gray-800 hover:text-gray-600 hover:underline text-1xl">
+                        <a href="#">commandes</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="mr-[-7%] text-4xl font-bold text-gray-800">
+                <a href="#"><i class="ph-fill ph-plant"></i>Seed</a>
+            </div>
+        </div>
+    </header>
+}

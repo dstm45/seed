@@ -1,0 +1,7 @@
+package component
+
+
+templ Button(value, target string) {
+    {{ endpoint := templ.SafeURL(target) }}
+    <a href={endpoint} class="">{value}</a>
+}

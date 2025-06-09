@@ -1,0 +1,10 @@
+package user
+
+import "github.com/dstm45/seed/pkg/views/component"
+
+
+templ Acheter() {
+    @component.Form("post") {
+        @component.Input("quantite billet", "number", "nombre de billet")
+    }
+}

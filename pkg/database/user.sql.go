@@ -63,8 +63,46 @@ func (q *Queries) GetUserId(ctx context.Context, id uint64) (User, error) {
 	return i, err
 }
 
+const getUsers = `-- name: GetUsers :many
+SELECT id, nom, postnom, prenom, type_compte, id_region, id_stock, email, password_hash from users
+`
+
+func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
+	rows, err := q.query(ctx, q.getUsersStmt, getUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Nom,
+			&i.Postnom,
+			&i.Prenom,
+			&i.TypeCompte,
+			&i.IDRegion,
+			&i.IDStock,
+			&i.Email,
+			&i.PasswordHash,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const newUser = `-- name: NewUser :exec
-INSERT INTO users (nom, postnom, prenom, email, password_hash)VALUES(?, ?, ?, ?, ?)
+INSERT INTO users (nom, postnom, prenom, email, password_hash)
+VALUES(?, ?, ?, ?, ?)
 `
 
 type NewUserParams struct {
