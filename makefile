@@ -1,6 +1,6 @@
 run:
 	templ generate
-	npx @tailwindcss/cli -i ./pkg/views/css/input.css -o ./pkg/views/css/output.css 
+	npx @tailwindcss/cli -i ./pkg/views/static/css/input.css -o ./pkg/views/static/css/output.css 
 	go run cmd/main.go
 
 up:

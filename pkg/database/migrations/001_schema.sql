@@ -4,47 +4,22 @@ CREATE TABLE IF NOT EXISTS users (
     nom VARCHAR(45),
     postnom VARCHAR(45),
     prenom VARCHAR(45),
+    email VARCHAR(100),
     type_compte VARCHAR(20),
-    id_region INT,
-    id_stock INT
+    password_hash VARCHAR(200)
 );
 
-CREATE TABLE IF NOT EXISTS produits (
+CREATE TABLE IF NOT EXISTS evenements (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(45),
-    id_agriculteur INT
-);
-
-CREATE TABLE IF NOT EXISTS stock (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
-);
-
-CREATE TABLE IF NOT EXISTS champs (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
-);
-
-CREATE TABLE IF NOT EXISTS regions (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(45)
-);
-
-CREATE TABLE IF NOT EXISTS marches (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(50),
-    id_region INT
-);
-
-CREATE TABLE IF NOT EXISTS commandes (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_produit INT,
-    id_client INT
+    description TEXT NOT NULL,
+    debut_vente DATE NOT NULL,
+    fin_vente DATE NOT NULL,
+    date_evenement DATE NOT NULL,
+    organisateur BIGINT UNSIGNED NOT NULL,
+    FOREIGN KEY (organisateur) REFERENCES users(id)
 );
 
 -- +goose Down
+DROP TABLE evenements;
 DROP TABLE users;
-DROP TABLE marches;
-DROP TABLE commandes;
-DROP TABLE champs;
-DROP TABLE regions;
-DROP TABLE produits;
-DROP TABLE stock;

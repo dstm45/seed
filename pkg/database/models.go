@@ -6,45 +6,17 @@ package database
 
 import (
 	"database/sql"
+	"time"
 )
 
-type Annonce struct {
-	ID        uint64         `json:"id"`
-	UserID    sql.NullInt64  `json:"user_id"`
-	Message   sql.NullString `json:"message"`
-	CreatedAt sql.NullTime   `json:"created_at"`
-	UpdatedAt sql.NullTime   `json:"updated_at"`
-}
-
-type Champ struct {
-	ID uint64 `json:"id"`
-}
-
-type Commande struct {
-	ID        uint64        `json:"id"`
-	IDProduit sql.NullInt32 `json:"id_produit"`
-	IDClient  sql.NullInt32 `json:"id_client"`
-}
-
-type March struct {
-	ID       uint64         `json:"id"`
-	Nom      sql.NullString `json:"nom"`
-	IDRegion sql.NullInt32  `json:"id_region"`
-}
-
-type Produit struct {
+type Evenement struct {
 	ID            uint64         `json:"id"`
 	Nom           sql.NullString `json:"nom"`
-	IDAgriculteur sql.NullInt32  `json:"id_agriculteur"`
-}
-
-type Region struct {
-	ID  uint64         `json:"id"`
-	Nom sql.NullString `json:"nom"`
-}
-
-type Stock struct {
-	ID uint64 `json:"id"`
+	Description   string         `json:"description"`
+	DebutVente    time.Time      `json:"debut_vente"`
+	FinVente      time.Time      `json:"fin_vente"`
+	DateEvenement time.Time      `json:"date_evenement"`
+	Organisateur  uint64         `json:"organisateur"`
 }
 
 type User struct {
@@ -52,9 +24,7 @@ type User struct {
 	Nom          sql.NullString `json:"nom"`
 	Postnom      sql.NullString `json:"postnom"`
 	Prenom       sql.NullString `json:"prenom"`
+	Email        sql.NullString `json:"email"`
 	TypeCompte   sql.NullString `json:"type_compte"`
-	IDRegion     sql.NullInt32  `json:"id_region"`
-	IDStock      sql.NullInt32  `json:"id_stock"`
-	Email        string         `json:"email"`
 	PasswordHash sql.NullString `json:"password_hash"`
 }

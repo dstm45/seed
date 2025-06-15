@@ -1,6 +1,6 @@
 -- name: GetUserByEmail :one
 SELECT * from users WHERE email = ?;
--- name: GetUserId :one
+-- name: GetUserById :one
 SELECT * from users WHERE id = ?;
 -- name: GetPasswordHash :one
 SELECT password_hash from users WHERE email = ?;

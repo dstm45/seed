@@ -1,10 +1,10 @@
 package config
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/dstm45/seed/pkg/controllers"
+	"github.com/dstm45/seed/pkg/utils"
 )
 
 type Myserver struct {
@@ -14,14 +14,11 @@ type Myserver struct {
 func NewServer() *Myserver {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /user/{username}", controllers.UserIndex)
-	// mux.HandleFunc("GET /user/{username}/annonces", controllers.UserAnnonces)
-	// mux.HandleFunc("GET /user/{username}/dashboard", controllers.UserDashboard)
-	// mux.HandleFunc("GET /login", controllers.Login)
-	// mux.HandleFunc("POST /login", controllers.Login)
-	mux.HandleFunc("GET /connexion", controllers.SignIn)
-	mux.HandleFunc("POST /connexion", controllers.SignIn)
-	fileSystem := http.FileServer(http.Dir("../views/static"))
-	mux.Handle("/", fileSystem)
+	mux.HandleFunc("GET /signup", controllers.SignUp)
+	mux.HandleFunc("POST /signup", controllers.SignUp)
+	mux.HandleFunc("GET /signin", controllers.SignIn)
+	mux.HandleFunc("POST /signin", controllers.SignIn)
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("pkg/views/static"))))
 	newServer := Myserver{
 		&http.Server{
 			Handler: mux,
@@ -32,5 +29,6 @@ func NewServer() *Myserver {
 }
 
 func (s Myserver) Start() {
-	log.Fatalln(s.ListenAndServe())
+	err := s.ListenAndServe()
+	utils.AfficherErreur("Erreur lors du lancement du serveur", err)
 }

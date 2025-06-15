@@ -3,12 +3,44 @@ package authentication
 import "github.com/dstm45/seed/pkg/views/component"
 
 templ SignUp() {
-    @component.LoginBase("Login") {
-        @component.Form("post") {
-            <p class="text-2xl font-bold flex-1">Login</p>
-            @component.Input("email", "email", "") 
-            @component.Input("mot de passe", "password", "") 
-            @component.Submit("Se connecter")
-        }
+    @component.Base("login", "Créer un compte") {
+        <div class="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
+            <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+                <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+                    <div class="mt-12 flex flex-col items-center">
+                        <div class="w-full flex-1 mt-8">
+                            <div class="mx-auto max-w-xs">
+                            @component.Form("post") {
+                                @component.InputLogin("nom", "text", "Nom")
+                                @component.InputLogin("prenom", "text", "Prénom")
+                                @component.InputLogin("pseudonyme", "text", "Nom d'utilisateur")
+                                @component.InputLogin("email", "email", "Adresse email")
+                                @component.InputLogin("mot_de_passe", "password", "Mot de passe")
+                                @component.InputLogin("confirmer_mot_passe", "password", "Confirmer le mot de passe")
+                                <button
+                                    type="submit" class="mt-5 tracking-wide font-semibold bg-green-400 text-white-500 w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                                    <svg class="w-6 h-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                                        <circle cx="8.5" cy="7" r="4" />
+                                        <path d="M20 8v6M23 11h-6" />
+                                    </svg>
+                                    <span type="submit" class="ml-">
+                                        Créer un compte
+                                    </span>
+                                </button>
+                                <p class="mt-6 text-xs text-gray-600 text-center">
+                                    Vous avez déjà un compte?
+                                    <a href="/signin" class="border-b border-gray-500 border-dotted">
+                                        Se connecter
+                                    </a>
+                                </p>
+                            }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 }

@@ -1,9 +1,6 @@
 package utils
 
 import (
-	"errors"
-	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -12,22 +9,29 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type TokenClaim struct {
+	Email string `json:"email"`
+	jwt.RegisteredClaims
+}
+
 var secret []byte = []byte(os.Getenv("SECRET"))
 
 func BuildToken(user database.User) *http.Cookie {
-	claims := jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		NotBefore: jwt.NewNumericDate(time.Now()),
-		Issuer:    "seed",
-		Subject:   "auth",
-		ID:        fmt.Sprintf("%d", user.ID),
+	claims := TokenClaim{
+		Email: user.Email.String,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			Issuer:    "seed",
+			Subject:   "auth",
+		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	ss, err := token.SignedString(secret)
 	if err != nil {
-		log.Println("Erreur lors de la création du token jwt", err)
+		AfficherErreur("Erreur lors de la création du token jwt", err)
 	}
 	cookie := http.Cookie{
 		Name:    "auth",
@@ -37,35 +41,27 @@ func BuildToken(user database.User) *http.Cookie {
 	return &cookie
 }
 
-func ParseToken(r *http.Request) bool {
+func ParseToken(r *http.Request, email string) bool {
 	cookie, err := r.Cookie("auth")
 	if err == http.ErrNoCookie {
-		log.Println("le cookie est inéxistant")
+		AfficherErreur("le cookie est inéxistant", err)
 		return false
 	}
-	var tokenString = cookie.Value
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SECRET")), nil
+	tokenString := cookie.Value
+	token, err := jwt.ParseWithClaims(tokenString, &TokenClaim{}, func(token *jwt.Token) (interface{}, error) {
+		return secret, nil
 	})
 	if err != nil {
-		log.Println("Erreur lors du parsing du token", err)
+		AfficherErreur("Erreur lors du parsing du token", err)
 		return false
 	}
 
-	switch {
-	case token.Valid:
-		return true
-	case errors.Is(err, jwt.ErrTokenMalformed):
-		fmt.Println("That's not even a token")
+	claims, ok := token.Claims.(*TokenClaim)
+	if !ok || !token.Valid {
 		return false
-	case errors.Is(err, jwt.ErrTokenSignatureInvalid):
-		fmt.Println("Invalid signature")
+	}
+	if claims.Email != email {
 		return false
-	case errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet):
-		fmt.Println("Timing is everything")
-		return false
-	default:
-		fmt.Println("Couldn't handle this token:", err)
 	}
 	return true
 }

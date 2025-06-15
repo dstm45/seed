@@ -1,100 +1,75 @@
 package controllers
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/dstm45/seed/pkg/database"
+	"github.com/dstm45/seed/pkg/utils"
 	"github.com/dstm45/seed/pkg/views/authentication"
-	"github.com/go-session/session/v3"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func SignIn(w http.ResponseWriter, r *http.Request) {
-	var err error
-	ctx := context.Background()
-	if r.Method == http.MethodPost {
-		err = r.ParseForm()
+	if r.Method == http.MethodGet {
+		template := authentication.SignIn()
+		err := template.Render(r.Context(), w)
 		if err != nil {
-			log.SetOutput(os.Stdout)
-			log.Println("Erreur lors du traitement du formulaire dans le controlleur connexion", err)
+			utils.AfficherErreur("Erreur lors du rendu de la page signin", err)
+			return
+		}
+	} else if r.Method == http.MethodPost {
+		err := r.ParseForm()
+		if err != nil {
+			utils.AfficherErreur("Erreur lors du traitement des formulaires dans la fonction signin", err)
 			return
 		}
 		email := r.Form.Get("email")
-		password := r.Form.Get("mot de passe")
-		db := database.Connection()
-		defer db.Close()
-		user, err := db.GetUserByEmail(ctx, email)
-		if err != nil {
-			log.SetOutput(os.Stdout)
-			log.Println(err)
-			return
-		}
-		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash.String), []byte(password))
-		if err != nil {
-			log.SetOutput(os.Stdout)
-			log.Println("erreur lors de la création du hash du mot de passe", err)
-			return
+		password := r.Form.Get("mot_de_passe")
+		tokenValide := utils.ParseToken(r)
+		passwordCorrect := utils.ComparerHash(password, email)
+		if validiteToken && passwordCorrect{
+			
+		} else if !{			
+			fmt.Println("email ou mot de passe incorrect")
 		}
 	}
-	template := authentication.SignIn()
-	err = template.Render(ctx, w)
-	if err != nil {
-		log.SetOutput(os.Stdout)
-		log.Println(err)
-		return
-	}
-
 }
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
-	var err error
-	ctx := context.Background()
-	if r.Method == http.MethodPost {
-		err = r.ParseForm()
+	if r.Method == http.MethodGet {
+		template := authentication.SignUp()
+		err := template.Render(r.Context(), w)
 		if err != nil {
-			log.SetOutput(os.Stdout)
-			log.Println(err)
+			log.Println("Erreur lors du rendu de la page signup")
+		}
+	} else if r.Method == http.MethodPost {
+		err := r.ParseForm()
+		if err != nil {
+			utils.AfficherErreur("Erreur dans le traitement des formulaire dans la fonction signup", err)
 			return
 		}
-		nom := r.Form.Get("nom")
-		postnom := r.Form.Get("postnom")
-		prenom := r.Form.Get("prenom")
-		email := r.Form.Get("email")
-		password := r.Form.Get("mot de passe")
-		hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-		if err != nil {
-			log.Println("Erreur lors de la création du hash", err)
-			return
+		hashMdp := utils.Hasher(r.Form.Get("mot_de_passe"))
+		user := database.NewUserParams{
+			Nom:          sql.NullString{String: r.Form.Get("nom")},
+			Prenom:       sql.NullString{String: r.Form.Get("prenom")},
+			Email:        sql.NullString{String: r.Form.Get("email")},
+			PasswordHash: sql.NullString{String: hashMdp},
 		}
 		db := database.Connection()
-		defer db.Close()
-		db.NewUser(ctx, database.NewUserParams{
-			Nom:          sql.NullString{String: nom, Valid: true},
-			Postnom:      sql.NullString{String: postnom, Valid: true},
-			Prenom:       sql.NullString{String: prenom, Valid: true},
-			Email:        email,
-			PasswordHash: sql.NullString{String: string(hash), Valid: true},
-		})
-		store, err := session.Start(ctx, w, r)
+		err = db.NewUser(r.Context(), user)
 		if err != nil {
-			log.Println("Erreur lors de la création de la session", err)
+			utils.AfficherErreur("Erreur lors de l'enregistrement de l'utilisateur dans la base de donnée", err)
+			return
 		}
+		u, err := db.GetUserByEmail(r.Context(), sql.NullString{String: r.Form.Get("email"), Valid: true})
 		if err != nil {
-			log.Println("Erreur lors du retrait de l'email", err)
+			utils.AfficherErreur("Erreur lors du retrait de l'utilisateur dans la base de donnée", err)
+			return
 		}
-		store.Set(email, true)
-		http.Redirect(w, r, fmt.Sprintf("/user/%s", nom), http.StatusContinue)
-	}
-	template := authentication.SignUp()
-	err = template.Render(ctx, w)
-	if err != nil {
-		log.SetOutput(os.Stdout)
-		log.Println("Erreur lros de la création du template login", err)
+		http.SetCookie(w, utils.BuildToken(u))
+		http.Redirect(w, r, "/index", http.StatusSeeOther)
 		return
 	}
 }

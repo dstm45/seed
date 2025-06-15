@@ -14,7 +14,7 @@ const getPasswordHash = `-- name: GetPasswordHash :one
 SELECT password_hash from users WHERE email = ?
 `
 
-func (q *Queries) GetPasswordHash(ctx context.Context, email string) (sql.NullString, error) {
+func (q *Queries) GetPasswordHash(ctx context.Context, email sql.NullString) (sql.NullString, error) {
 	row := q.queryRow(ctx, q.getPasswordHashStmt, getPasswordHash, email)
 	var password_hash sql.NullString
 	err := row.Scan(&password_hash)
@@ -22,10 +22,10 @@ func (q *Queries) GetPasswordHash(ctx context.Context, email string) (sql.NullSt
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, nom, postnom, prenom, type_compte, id_region, id_stock, email, password_hash from users WHERE email = ?
+SELECT id, nom, postnom, prenom, email, type_compte, password_hash from users WHERE email = ?
 `
 
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+func (q *Queries) GetUserByEmail(ctx context.Context, email sql.NullString) (User, error) {
 	row := q.queryRow(ctx, q.getUserByEmailStmt, getUserByEmail, email)
 	var i User
 	err := row.Scan(
@@ -33,17 +33,15 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Nom,
 		&i.Postnom,
 		&i.Prenom,
-		&i.TypeCompte,
-		&i.IDRegion,
-		&i.IDStock,
 		&i.Email,
+		&i.TypeCompte,
 		&i.PasswordHash,
 	)
 	return i, err
 }
 
 const getUserId = `-- name: GetUserId :one
-SELECT id, nom, postnom, prenom, type_compte, id_region, id_stock, email, password_hash from users WHERE id = ?
+SELECT id, nom, postnom, prenom, email, type_compte, password_hash from users WHERE id = ?
 `
 
 func (q *Queries) GetUserId(ctx context.Context, id uint64) (User, error) {
@@ -54,17 +52,15 @@ func (q *Queries) GetUserId(ctx context.Context, id uint64) (User, error) {
 		&i.Nom,
 		&i.Postnom,
 		&i.Prenom,
-		&i.TypeCompte,
-		&i.IDRegion,
-		&i.IDStock,
 		&i.Email,
+		&i.TypeCompte,
 		&i.PasswordHash,
 	)
 	return i, err
 }
 
 const getUsers = `-- name: GetUsers :many
-SELECT id, nom, postnom, prenom, type_compte, id_region, id_stock, email, password_hash from users
+SELECT id, nom, postnom, prenom, email, type_compte, password_hash from users
 `
 
 func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
@@ -81,10 +77,8 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 			&i.Nom,
 			&i.Postnom,
 			&i.Prenom,
-			&i.TypeCompte,
-			&i.IDRegion,
-			&i.IDStock,
 			&i.Email,
+			&i.TypeCompte,
 			&i.PasswordHash,
 		); err != nil {
 			return nil, err
@@ -109,7 +103,7 @@ type NewUserParams struct {
 	Nom          sql.NullString `json:"nom"`
 	Postnom      sql.NullString `json:"postnom"`
 	Prenom       sql.NullString `json:"prenom"`
-	Email        string         `json:"email"`
+	Email        sql.NullString `json:"email"`
 	PasswordHash sql.NullString `json:"password_hash"`
 }
 

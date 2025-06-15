@@ -1,9 +1,9 @@
 package component
 
-templ Input(name, Type, value string) {
+templ InputLogin(name, Type, placeholder string) {
     <input 
-        type={Type} value={value} name={name}
-        class="w-full border-3 border-gray-800 rounded-lg p-2 mb-3 font-bold focus:outline-none mx-auto bg-gray-800 text-gray-200"
+        type={Type} placeholder={placeholder} name={name}
+        class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
     ><br/>
 }
 
@@ -11,12 +11,12 @@ templ Submit(value string) {
     <input 
         type="submit"
         value={value}
-        class="w-full h-10 border-3 border-gray-800 rounded-lg p-1 mb-1 bg-gray-200 font-bold focus:outline-none mx-auto"
+        class="w-full h-10 border-3 border-gray-800 rounded-lg p-1 mb-1 bg-yellow-500 hover:bg-yellow-600 font-bold focus:outline-none mx-auto"
     /><br/>
 }
 
 templ Form(method string) {
-    <form method={method} class="flex flex-col">
+    <form method={method}>
         {children...}
     </form>
 }
