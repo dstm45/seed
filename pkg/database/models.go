@@ -5,26 +5,24 @@
 package database
 
 import (
-	"database/sql"
-	"time"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Evenement struct {
-	ID            uint64         `json:"id"`
-	Nom           sql.NullString `json:"nom"`
-	Description   string         `json:"description"`
-	DebutVente    time.Time      `json:"debut_vente"`
-	FinVente      time.Time      `json:"fin_vente"`
-	DateEvenement time.Time      `json:"date_evenement"`
-	Organisateur  uint64         `json:"organisateur"`
+	ID            int64       `json:"id"`
+	Nom           pgtype.Text `json:"nom"`
+	Description   string      `json:"description"`
+	DebutVente    pgtype.Date `json:"debut_vente"`
+	FinVente      pgtype.Date `json:"fin_vente"`
+	DateEvenement pgtype.Date `json:"date_evenement"`
+	Organisateur  int64       `json:"organisateur"`
 }
 
 type User struct {
-	ID           uint64         `json:"id"`
-	Nom          sql.NullString `json:"nom"`
-	Postnom      sql.NullString `json:"postnom"`
-	Prenom       sql.NullString `json:"prenom"`
-	Email        sql.NullString `json:"email"`
-	TypeCompte   sql.NullString `json:"type_compte"`
-	PasswordHash sql.NullString `json:"password_hash"`
+	ID           int64       `json:"id"`
+	Nom          pgtype.Text `json:"nom"`
+	Prenom       pgtype.Text `json:"prenom"`
+	Email        pgtype.Text `json:"email"`
+	TypeCompte   pgtype.Text `json:"type_compte"`
+	PasswordHash pgtype.Text `json:"password_hash"`
 }

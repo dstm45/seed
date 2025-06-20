@@ -7,31 +7,31 @@ package database
 
 import (
 	"context"
-	"database/sql"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getPasswordHash = `-- name: GetPasswordHash :one
-SELECT password_hash from users WHERE email = ?
+SELECT password_hash from users WHERE email = $1
 `
 
-func (q *Queries) GetPasswordHash(ctx context.Context, email sql.NullString) (sql.NullString, error) {
-	row := q.queryRow(ctx, q.getPasswordHashStmt, getPasswordHash, email)
-	var password_hash sql.NullString
+func (q *Queries) GetPasswordHash(ctx context.Context, email pgtype.Text) (pgtype.Text, error) {
+	row := q.db.QueryRow(ctx, getPasswordHash, email)
+	var password_hash pgtype.Text
 	err := row.Scan(&password_hash)
 	return password_hash, err
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, nom, postnom, prenom, email, type_compte, password_hash from users WHERE email = ?
+SELECT id, nom, prenom, email, type_compte, password_hash from users WHERE email = $1
 `
 
-func (q *Queries) GetUserByEmail(ctx context.Context, email sql.NullString) (User, error) {
-	row := q.queryRow(ctx, q.getUserByEmailStmt, getUserByEmail, email)
+func (q *Queries) GetUserByEmail(ctx context.Context, email pgtype.Text) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByEmail, email)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Nom,
-		&i.Postnom,
 		&i.Prenom,
 		&i.Email,
 		&i.TypeCompte,
@@ -40,17 +40,16 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email sql.NullString) (Use
 	return i, err
 }
 
-const getUserId = `-- name: GetUserId :one
-SELECT id, nom, postnom, prenom, email, type_compte, password_hash from users WHERE id = ?
+const getUserById = `-- name: GetUserById :one
+SELECT id, nom, prenom, email, type_compte, password_hash from users WHERE id = $1
 `
 
-func (q *Queries) GetUserId(ctx context.Context, id uint64) (User, error) {
-	row := q.queryRow(ctx, q.getUserIdStmt, getUserId, id)
+func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRow(ctx, getUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Nom,
-		&i.Postnom,
 		&i.Prenom,
 		&i.Email,
 		&i.TypeCompte,
@@ -60,11 +59,11 @@ func (q *Queries) GetUserId(ctx context.Context, id uint64) (User, error) {
 }
 
 const getUsers = `-- name: GetUsers :many
-SELECT id, nom, postnom, prenom, email, type_compte, password_hash from users
+SELECT id, nom, prenom, email, type_compte, password_hash from users
 `
 
 func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
-	rows, err := q.query(ctx, q.getUsersStmt, getUsers)
+	rows, err := q.db.Query(ctx, getUsers)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +74,6 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Nom,
-			&i.Postnom,
 			&i.Prenom,
 			&i.Email,
 			&i.TypeCompte,
@@ -85,9 +83,6 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -95,22 +90,20 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 }
 
 const newUser = `-- name: NewUser :exec
-INSERT INTO users (nom, postnom, prenom, email, password_hash)
-VALUES(?, ?, ?, ?, ?)
+INSERT INTO users (nom, prenom, email, password_hash)
+VALUES($1, $2, $3, $4)
 `
 
 type NewUserParams struct {
-	Nom          sql.NullString `json:"nom"`
-	Postnom      sql.NullString `json:"postnom"`
-	Prenom       sql.NullString `json:"prenom"`
-	Email        sql.NullString `json:"email"`
-	PasswordHash sql.NullString `json:"password_hash"`
+	Nom          pgtype.Text `json:"nom"`
+	Prenom       pgtype.Text `json:"prenom"`
+	Email        pgtype.Text `json:"email"`
+	PasswordHash pgtype.Text `json:"password_hash"`
 }
 
 func (q *Queries) NewUser(ctx context.Context, arg NewUserParams) error {
-	_, err := q.exec(ctx, q.newUserStmt, newUser,
+	_, err := q.db.Exec(ctx, newUser,
 		arg.Nom,
-		arg.Postnom,
 		arg.Prenom,
 		arg.Email,
 		arg.PasswordHash,

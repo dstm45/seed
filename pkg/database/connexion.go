@@ -1,29 +1,28 @@
 package database
 
 import (
-	"database/sql"
+	"context"
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v5"
+	_ "github.com/lib/pq"
 )
 
-// Connection opens a MySQL database connection using environment variables
-func Connection() *Queries {
+// Connection opens a PostgreSQL database connection using environment variables
+func Connection() *pgx.Conn {
 	dsn := os.Getenv("DATABASE_URL")
 
 	// Open the database connection
-	db, err := sql.Open("mysql", dsn)
+	ctx := context.Background()
+	db, err := pgx.Connect(ctx, dsn)
 	if err != nil {
 		log.Fatalln("Erreur lors de la connexion à la base de données:", err)
 	}
-	defer db.Close()
-
 	// Verify the connection by attempting a simple query
-	if err := db.Ping(); err != nil {
+	if err := db.Ping(ctx); err != nil {
 		log.Fatalln("Erreur lors de la vérification de la connexion à la base de données:", err)
 	}
 
-	queries := New(db)
-	return queries
+	return db
 }

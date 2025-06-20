@@ -1,6 +1,6 @@
 -- +goose Up
 CREATE TABLE IF NOT EXISTS users (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nom VARCHAR(45),
     postnom VARCHAR(45),
     prenom VARCHAR(45),
@@ -10,13 +10,13 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS evenements (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nom VARCHAR(45),
     description TEXT NOT NULL,
     debut_vente DATE NOT NULL,
     fin_vente DATE NOT NULL,
     date_evenement DATE NOT NULL,
-    organisateur BIGINT UNSIGNED NOT NULL,
+    organisateur BIGINT NOT NULL,
     FOREIGN KEY (organisateur) REFERENCES users(id)
 );
 

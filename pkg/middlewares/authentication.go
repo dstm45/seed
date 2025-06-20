@@ -10,7 +10,8 @@ func IsAuthenticated(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if utils.ParseToken(r) {
 			next(w, r)
+			return
 		}
-		http.Redirect(w, r, "/signIn", http.StatusContinue)
+		http.Redirect(w, r, "/signin", http.StatusSeeOther)
 	}
 }

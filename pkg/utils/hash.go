@@ -2,11 +2,11 @@ package utils
 
 import (
 	"context"
-	"database/sql"
 	"log"
 	"os"
 
 	"github.com/dstm45/seed/pkg/database"
+	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,12 +22,14 @@ func Hasher(motDePasse string) string {
 
 func ComparerHash(motDePasse, email string) bool {
 	ctx := context.Background()
-	db := database.Connection()
-	hash, err := db.GetPasswordHash(ctx, sql.NullString{String: email, Valid: true})
+	conn := database.Connection()
+	db := database.New(conn)
+	defer conn.Close(ctx)
+	hash, err := db.GetPasswordHash(ctx, pgtype.Text{String: email, Valid: true})
 	if err != nil {
 		AfficherErreur("Erreur lors du retrait du hash dans la base de donnée", err)
 		return false
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(hash.String), []byte(motDePasse))
-	return err != nil
+	return err == nil
 }

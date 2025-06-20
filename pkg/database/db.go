@@ -6,123 +6,27 @@ package database
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type DBTX interface {
-	ExecContext(context.Context, string, ...interface{}) (sql.Result, error)
-	PrepareContext(context.Context, string) (*sql.Stmt, error)
-	QueryContext(context.Context, string, ...interface{}) (*sql.Rows, error)
-	QueryRowContext(context.Context, string, ...interface{}) *sql.Row
+	Exec(context.Context, string, ...interface{}) (pgconn.CommandTag, error)
+	Query(context.Context, string, ...interface{}) (pgx.Rows, error)
+	QueryRow(context.Context, string, ...interface{}) pgx.Row
 }
 
 func New(db DBTX) *Queries {
 	return &Queries{db: db}
 }
 
-func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
-	q := Queries{db: db}
-	var err error
-	if q.getPasswordHashStmt, err = db.PrepareContext(ctx, getPasswordHash); err != nil {
-		return nil, fmt.Errorf("error preparing query GetPasswordHash: %w", err)
-	}
-	if q.getUserByEmailStmt, err = db.PrepareContext(ctx, getUserByEmail); err != nil {
-		return nil, fmt.Errorf("error preparing query GetUserByEmail: %w", err)
-	}
-	if q.getUserIdStmt, err = db.PrepareContext(ctx, getUserId); err != nil {
-		return nil, fmt.Errorf("error preparing query GetUserId: %w", err)
-	}
-	if q.getUsersStmt, err = db.PrepareContext(ctx, getUsers); err != nil {
-		return nil, fmt.Errorf("error preparing query GetUsers: %w", err)
-	}
-	if q.newUserStmt, err = db.PrepareContext(ctx, newUser); err != nil {
-		return nil, fmt.Errorf("error preparing query NewUser: %w", err)
-	}
-	return &q, nil
-}
-
-func (q *Queries) Close() error {
-	var err error
-	if q.getPasswordHashStmt != nil {
-		if cerr := q.getPasswordHashStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getPasswordHashStmt: %w", cerr)
-		}
-	}
-	if q.getUserByEmailStmt != nil {
-		if cerr := q.getUserByEmailStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getUserByEmailStmt: %w", cerr)
-		}
-	}
-	if q.getUserIdStmt != nil {
-		if cerr := q.getUserIdStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getUserIdStmt: %w", cerr)
-		}
-	}
-	if q.getUsersStmt != nil {
-		if cerr := q.getUsersStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getUsersStmt: %w", cerr)
-		}
-	}
-	if q.newUserStmt != nil {
-		if cerr := q.newUserStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing newUserStmt: %w", cerr)
-		}
-	}
-	return err
-}
-
-func (q *Queries) exec(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) (sql.Result, error) {
-	switch {
-	case stmt != nil && q.tx != nil:
-		return q.tx.StmtContext(ctx, stmt).ExecContext(ctx, args...)
-	case stmt != nil:
-		return stmt.ExecContext(ctx, args...)
-	default:
-		return q.db.ExecContext(ctx, query, args...)
-	}
-}
-
-func (q *Queries) query(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) (*sql.Rows, error) {
-	switch {
-	case stmt != nil && q.tx != nil:
-		return q.tx.StmtContext(ctx, stmt).QueryContext(ctx, args...)
-	case stmt != nil:
-		return stmt.QueryContext(ctx, args...)
-	default:
-		return q.db.QueryContext(ctx, query, args...)
-	}
-}
-
-func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) *sql.Row {
-	switch {
-	case stmt != nil && q.tx != nil:
-		return q.tx.StmtContext(ctx, stmt).QueryRowContext(ctx, args...)
-	case stmt != nil:
-		return stmt.QueryRowContext(ctx, args...)
-	default:
-		return q.db.QueryRowContext(ctx, query, args...)
-	}
-}
-
 type Queries struct {
-	db                  DBTX
-	tx                  *sql.Tx
-	getPasswordHashStmt *sql.Stmt
-	getUserByEmailStmt  *sql.Stmt
-	getUserIdStmt       *sql.Stmt
-	getUsersStmt        *sql.Stmt
-	newUserStmt         *sql.Stmt
+	db DBTX
 }
 
-func (q *Queries) WithTx(tx *sql.Tx) *Queries {
+func (q *Queries) WithTx(tx pgx.Tx) *Queries {
 	return &Queries{
-		db:                  tx,
-		tx:                  tx,
-		getPasswordHashStmt: q.getPasswordHashStmt,
-		getUserByEmailStmt:  q.getUserByEmailStmt,
-		getUserIdStmt:       q.getUserIdStmt,
-		getUsersStmt:        q.getUsersStmt,
-		newUserStmt:         q.newUserStmt,
+		db: tx,
 	}
 }

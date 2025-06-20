@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/dstm45/seed/pkg/controllers"
+	"github.com/dstm45/seed/pkg/middlewares"
 	"github.com/dstm45/seed/pkg/utils"
 )
 
@@ -11,9 +12,13 @@ type Myserver struct {
 	*http.Server
 }
 
+var (
+	index = middlewares.IsAuthenticated(controllers.UserIndex)
+)
+
 func NewServer() *Myserver {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /user/{username}", controllers.UserIndex)
+	mux.HandleFunc("GET /index", index)
 	mux.HandleFunc("GET /signup", controllers.SignUp)
 	mux.HandleFunc("POST /signup", controllers.SignUp)
 	mux.HandleFunc("GET /signin", controllers.SignIn)

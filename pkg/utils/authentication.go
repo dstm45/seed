@@ -41,7 +41,7 @@ func BuildToken(user database.User) *http.Cookie {
 	return &cookie
 }
 
-func ParseToken(r *http.Request, email string) bool {
+func ParseToken(r *http.Request) bool {
 	cookie, err := r.Cookie("auth")
 	if err == http.ErrNoCookie {
 		AfficherErreur("le cookie est inéxistant", err)
@@ -55,13 +55,13 @@ func ParseToken(r *http.Request, email string) bool {
 		AfficherErreur("Erreur lors du parsing du token", err)
 		return false
 	}
+	return token.Valid
+}
 
-	claims, ok := token.Claims.(*TokenClaim)
-	if !ok || !token.Valid {
-		return false
-	}
-	if claims.Email != email {
-		return false
-	}
-	return true
+func DeleteToken(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:    "auth",
+		MaxAge:  -1,
+		Expires: time.Unix(0, 0),
+	})
 }
