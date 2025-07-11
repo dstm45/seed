@@ -1,9 +1,11 @@
+// Package config fournit la configuration et l'initialisation du serveur.
 package config
 
 import (
 	"net/http"
 
 	"github.com/dstm45/seed/pkg/controllers"
+	"github.com/dstm45/seed/pkg/database"
 	"github.com/dstm45/seed/pkg/middlewares"
 	"github.com/dstm45/seed/pkg/utils"
 )
@@ -12,17 +14,50 @@ type Myserver struct {
 	*http.Server
 }
 
-var (
-	index = middlewares.IsAuthenticated(controllers.UserIndex)
-)
-
 func NewServer() *Myserver {
+	conn := database.Connection()
+	db := database.New(conn)
+	// controllers
+	user := controllers.UserController{
+		DB: db,
+	}
+	admin := controllers.AdminController{
+		DB: db,
+	}
+	auth := controllers.AuthController{
+		DB: db,
+	}
+	// user controllers
+	index := middlewares.IsAuthenticated(user.UserIndex)
+	editprofile := middlewares.IsAuthenticated(user.EditProfile)
+	editpassword := middlewares.IsAuthenticated(user.EditPassword)
+	// admin controllers
+	settings := middlewares.IsAdmin(admin.Settings)
+	dashboard := middlewares.IsAdmin(admin.Dashboard)
+	manageusers := middlewares.IsAdmin(admin.ManageUsers)
+	manageevent := middlewares.IsAdmin(admin.ManageEvents)
+	encours := middlewares.IsAdmin(admin.Encours)
+
 	mux := http.NewServeMux()
+	// auth
+	mux.HandleFunc("GET /signup", auth.SignUp)
+	mux.HandleFunc("POST /signup", auth.SignUp)
+	mux.HandleFunc("GET /signin", auth.SignIn)
+	mux.HandleFunc("POST /signin", auth.SignIn)
+	mux.HandleFunc("GET /logout", auth.Logout)
+	// user
 	mux.HandleFunc("GET /index", index)
-	mux.HandleFunc("GET /signup", controllers.SignUp)
-	mux.HandleFunc("POST /signup", controllers.SignUp)
-	mux.HandleFunc("GET /signin", controllers.SignIn)
-	mux.HandleFunc("POST /signin", controllers.SignIn)
+	mux.HandleFunc("/", index)
+	mux.HandleFunc("/editprofile", editprofile)
+	mux.HandleFunc("/editpassword", editpassword)
+	mux.HandleFunc("GET /evenement", user.UserEvent)
+	// admin
+	mux.HandleFunc("GET /admin/dashboard", dashboard)
+	mux.HandleFunc("GET /admin/settings", settings)
+	mux.HandleFunc("GET /admin/encours", encours)
+	mux.HandleFunc("GET /admin/manageusers", manageusers)
+	mux.HandleFunc("GET /admin/manageevent", manageevent)
+	// fileserver
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("pkg/views/static"))))
 	newServer := Myserver{
 		&http.Server{

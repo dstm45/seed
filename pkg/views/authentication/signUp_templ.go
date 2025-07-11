@@ -31,95 +31,11 @@ func SignUp() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen bg-gray-100 text-gray-900 flex justify-center\"><div class=\"max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1\"><div class=\"lg:w-1/2 xl:w-5/12 p-6 sm:p-12\"><div class=\"mt-12 flex flex-col items-center\"><div class=\"w-full flex-1 mt-8\"><div class=\"mx-auto max-w-xs\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = component.InputLogin("nom", "text", "Nom").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = component.InputLogin("prenom", "text", "Prénom").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = component.InputLogin("pseudonyme", "text", "Nom d'utilisateur").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = component.InputLogin("email", "email", "Adresse email").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = component.InputLogin("mot_de_passe", "password", "Mot de passe").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = component.InputLogin("confirmer_mot_passe", "password", "Confirmer le mot de passe").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " <button type=\"submit\" class=\"mt-5 tracking-wide font-semibold bg-green-400 text-white-500 w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none\"><svg class=\"w-6 h-6 -ml-2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2\"></path> <circle cx=\"8.5\" cy=\"7\" r=\"4\"></circle> <path d=\"M20 8v6M23 11h-6\"></path></svg> <span type=\"submit\" class=\"ml-\">Créer un compte</span></button><p class=\"mt-6 text-xs text-gray-600 text-center\">Vous avez déjà un compte? <a href=\"/signin\" class=\"border-b border-gray-500 border-dotted\">Se connecter</a></p>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = component.Form("post").Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div></div></div></div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = component.Base("login", "Créer un compte").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.Base("login", "Création de compte").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"bg-white p-8 rounded-xl shadow-xl w-full max-w-md\"><h1 class=\"text-center text-3xl font-bold text-gray-800 mb-6\">Create Your Account</h1><form action=\"/signup\" method=\"POST\" class=\"space-y-6\"><div><label for=\"nom\" class=\"block text-sm font-medium text-gray-700\">Nom</label> <input type=\"text\" id=\"nom\" name=\"nom\" required placeholder=\"Nom de famille\" class=\"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500\"></div><div><label for=\"prenom\" class=\"block text-sm font-medium text-gray-700\">Prénom</label> <input type=\"text\" id=\"prenom\" name=\"prenom\" required placeholder=\"Prénom\" class=\"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500\"></div><div><label for=\"pseudonyme\" class=\"block text-sm font-medium text-gray-700\">Pseudonyme</label> <input type=\"text\" id=\"pseudonyme\" name=\"pseudonyme\" required placeholder=\"Votre pseudonyme\" class=\"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500\"></div><div><label for=\"email\" class=\"block text-sm font-medium text-gray-700\">Adresse email</label> <input type=\"email\" id=\"email\" name=\"email\" required placeholder=\"you@example.com\" class=\"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500\"></div><div><label for=\"mot_de_passe\" class=\"block text-sm font-medium text-gray-700\">Mot de passe</label> <input type=\"mot_de_passe\" id=\"mot_de_passe\" name=\"mot_de_passe\" required placeholder=\"••••••••\" class=\"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500\"></div><div><label for=\"confirm_password\" class=\"block text-sm font-medium text-gray-700\">Confirmer le mot de passe</label> <input type=\"password\" id=\"confirm_password\" name=\"confirm_password\" required placeholder=\"••••••••\" class=\"mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500\"></div><button type=\"submit\" class=\"w-full bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-2 px-4 rounded-full hover:opacity-90 transition duration-300\">Créer un compte</button></form><p class=\"mt-4 text-sm text-center text-gray-600\">Vous avez déjà un compte? <a href=\"/signin\" class=\"text-red-500 font-semibold hover:underline\">Se connecter</a></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

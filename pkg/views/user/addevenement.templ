@@ -1,0 +1,369 @@
+package user
+
+templ AddEvent() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>Add Event | EventHub</title>
+			<script src="https://cdn.tailwindcss.com"></script>
+			<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+			<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+			<style>
+		#map {
+			height: 300px;
+			border-radius: 0.5rem;
+		}
+	</style>
+		</head>
+		<body class="bg-gray-50">
+			<!-- Header -->
+			<header class="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white">
+				<div
+					class="relative z-10 max-w-7xl mx-auto px-6 py-6 md:py-8 flex flex-col md:flex-row justify-between items-center"
+				>
+					<a href="/" class="text-3xl font-extrabold tracking-wide hover:scale-105 transition-transform duration-300">
+						EventHub
+					</a>
+					<nav class="mt-4 md:mt-0">
+						<ul class="flex space-x-8 items-center text-lg">
+							<li><a href="#concerts" class="hover:text-gray-200">Concerts</a></li>
+							<li><a href="#shows" class="hover:text-gray-200">Shows</a></li>
+							<li><a href="#seminars" class="hover:text-gray-200">Seminars</a></li>
+							<li><a href={ templ.SafeURL("/logout") } class="hover:text-gray-200">Se déconnecter</a></li>
+						</ul>
+					</nav>
+					<a
+						href="/buy-tickets"
+						class="mt-4 md:mt-0 bg-white text-red-500 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-gray-200 transition-all duration-300"
+					>
+						Buy Tickets
+					</a>
+				</div>
+				<div class="absolute right-0 bottom-0 md:bottom-10 opacity-70 float-animation">
+					<svg class="w-32 h-32 md:w-48 md:h-48" viewBox="0 0 200 200">
+						<path
+							fill="#FFCDD2"
+							d="M42.3,-64.2C55.8,-56.7,67.8,-44.3,72.8,-29.3C77.8,-14.4,75.8,2.3,70.7,17.5C65.7,32.7,57.7,46.4,46.8,54.5C35.9,62.6,22.1,65.1,7.5,68.4C-7.1,71.7,-21.8,75.9,-34.3,73.3C-46.7,70.8,-57,61.4,-65.3,49.8C-73.6,38.2,-79.8,24.4,-83.2,9.9C-86.6,-4.6,-87.2,-20.8,-80.2,-33.9C-73.2,-47,-58.7,-57,-43.1,-64.7C-27.5,-72.4,-13.8,-77.7,1.6,-80.6C17,-83.4,34,-84.2,42.3,-64.2Z"
+							transform="translate(100 100)"
+						></path>
+					</svg>
+				</div>
+				<div class="absolute inset-0 bg-black opacity-20"></div>
+			</header>
+			<!-- Main Content -->
+			<main class="max-w-4xl mx-auto px-6 py-12">
+				<div class="bg-white shadow rounded-lg p-8">
+					<h1 class="text-3xl font-bold text-gray-800 mb-8 border-b pb-4">Create a New Event</h1>
+					<form action="/events/create" method="POST" enctype="multipart/form-data" class="space-y-8">
+						<!-- Section: Event Details -->
+						<div class="space-y-6">
+							<h2 class="text-xl font-semibold text-gray-700">1. Event Details</h2>
+							<!-- Poster Upload -->
+							<div class="flex items-center space-x-6 p-4 border rounded-lg bg-gray-50">
+								<img
+									id="affichePreview"
+									src="https://picsum.photos/200/300"
+									alt="Affiche de l'événement"
+									class="w-48 h-64 rounded-lg border-4 border-red-200 object-cover bg-gray-200"
+								/>
+								<div class="space-y-2">
+									<label for="affiche" class="block text-gray-700 font-medium">Event Poster</label>
+									<input type="file" id="affiche" name="affiche" accept="image/*" class="hidden"/>
+									<label
+										for="affiche"
+										class="inline-flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 cursor-pointer transition"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-5 h-5 mr-2 text-gray-500"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M3 7h4l2-3h6l2 3h4v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+											></path>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M12 11a3 3 0 100 6 3 3 0 000-6z"
+											></path>
+										</svg>
+										Choose Poster
+									</label>
+									<p id="fileName" class="text-sm text-gray-500">No file chosen</p>
+								</div>
+							</div>
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+								<div>
+									<label for="title" class="block text-gray-700 font-medium">Event Name</label>
+									<input
+										type="text"
+										id="title"
+										name="title"
+										required
+										class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+									/>
+								</div>
+								<div>
+									<label for="category" class="block text-gray-700 font-medium">Category</label>
+									<select
+										id="category"
+										name="category"
+										required
+										class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+									>
+										<option value="Concert">Concert</option>
+										<option value="Show">Show</option>
+										<option value="Seminar">Seminar</option>
+										<option value="Conference">Conference</option>
+										<option value="Workshop">Workshop</option>
+										<option value="Other">Other</option>
+									</select>
+								</div>
+							</div>
+							<div>
+								<label for="description" class="block text-gray-700 font-medium">Description</label>
+								<textarea
+									id="description"
+									name="description"
+									rows="4"
+									class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+									placeholder="Describe the event"
+								></textarea>
+							</div>
+						</div>
+						<!-- Section: Date & Time -->
+						<div class="space-y-6">
+							<h2 class="text-xl font-semibold text-gray-700">2. Date & Time</h2>
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+								<div>
+									<label for="date" class="block text-gray-700 font-medium">Event Date</label>
+									<input
+										type="date"
+										id="date"
+										name="date"
+										required
+										class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+									/>
+								</div>
+								<div>
+									<label for="time" class="block text-gray-700 font-medium">Event Time</label>
+									<input
+										type="time"
+										id="time"
+										name="time"
+										required
+										class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+									/>
+								</div>
+							</div>
+						</div>
+						<!-- Section: Ticketing -->
+						<div class="space-y-6">
+							<h2 class="text-xl font-semibold text-gray-700">3. Ticketing</h2>
+							<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+								<div>
+									<label for="price" class="block text-gray-700 font-medium">Price (USD)</label>
+									<input
+										type="number"
+										id="price"
+										name="price"
+										required
+										min="0"
+										step="0.01"
+										class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+										placeholder="e.g., 25.50"
+									/>
+								</div>
+								<div>
+									<label for="places" class="block text-gray-700 font-medium">Available Places</label>
+									<input
+										type="number"
+										id="places"
+										name="places"
+										required
+										min="0"
+										class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+										placeholder="e.g., 100"
+									/>
+								</div>
+								<div>
+									<label for="sale_end_date" class="block text-gray-700 font-medium">Ticket Sale End Date</label>
+									<input
+										type="date"
+										id="sale_end_date"
+										name="sale_end_date"
+										required
+										class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+									/>
+								</div>
+							</div>
+						</div>
+						<!-- Section: Location -->
+						<div class="space-y-6">
+							<h2 class="text-xl font-semibold text-gray-700">4. Location</h2>
+							<div>
+								<label for="place" class="block text-gray-700 font-medium">Search for Address or Place in Kinshasa</label>
+								<div class="flex space-x-2 mt-1">
+									<input
+										type="text"
+										id="place"
+										placeholder="e.g. Stade des Martyrs"
+										class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"
+									/>
+									<button
+										type="button"
+										onclick="searchPlace()"
+										class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+									>
+										Search
+									</button>
+								</div>
+							</div>
+							<div id="map" class="w-full"></div>
+							<input type="hidden" id="latitude" name="latitude"/>
+							<input type="hidden" id="longitude" name="longitude"/>
+							<input type="hidden" id="address" name="address"/>
+						</div>
+						<!-- Submit Button -->
+						<div class="pt-6 border-t">
+							<button
+								type="submit"
+								class="w-full bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-3 rounded-full hover:opacity-90 transition text-lg"
+							>
+								Create Event
+							</button>
+						</div>
+					</form>
+				</div>
+			</main>
+			<!-- Leaflet Map Script -->
+			<script>
+		// Define Kinshasa's approximate bounding box
+		const kinshasaBounds = L.latLngBounds(
+			L.latLng(-4.5, 15.2), // Southwest
+			L.latLng(-4.2, 15.5)  // Northeast
+		);
+
+		// Initialize map centered on Kinshasa
+		const map = L.map('map', {
+			center: [-4.325, 15.3222], // Center of Kinshasa
+			zoom: 12,
+			minZoom: 11, // Prevent zooming out too far
+			maxBounds: kinshasaBounds, // Restrict map to Kinshasa
+			maxBoundsViscosity: 1.0 // Makes the bounds rigid
+		});
+
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 19,
+			attribution: '© OpenStreetMap'
+		}).addTo(map);
+
+		// Initialize marker at the center of Kinshasa
+		const marker = L.marker(map.getCenter(), {draggable: true}).addTo(map);
+		updateLatLng(map.getCenter().lat, map.getCenter().lng);
+
+		// Update hidden inputs on marker move
+		function updateLatLng(lat, lng) {
+			document.getElementById('latitude').value = lat;
+			document.getElementById('longitude').value = lng;
+		}
+
+		function updateAddress(address) {
+			document.getElementById('address').value = address;
+		}
+
+		marker.on('moveend', function (e) {
+			const latLng = e.target.getLatLng();
+
+			// Ensure the marker stays within bounds
+			if (!kinshasaBounds.contains(latLng)) {
+				map.panTo(kinshasaBounds.getCenter());
+				marker.setLatLng(kinshasaBounds.getCenter());
+				return;
+			}
+
+			updateLatLng(latLng.lat, latLng.lng);
+
+			// Reverse geocode to get address
+			fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latLng.lat}&lon=${latLng.lng}`)
+				.then(response => response.json())
+				.then(data => {
+					if (data.display_name) {
+						document.getElementById('place').value = data.display_name;
+						updateAddress(data.display_name);
+					}
+				});
+		});
+
+		function searchPlace() {
+			let query = document.getElementById('place').value;
+			if (!query) return;
+
+			// Append "Kinshasa" to the query to bias results
+			if (!query.toLowerCase().includes('kinshasa')) {
+				query += ', Kinshasa';
+			}
+
+			fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&bounded=1&viewbox=15.2,-4.5,15.5,-4.2`)
+				.then(response => response.json())
+				.then(data => {
+					if (data && data.length > 0) {
+						const {lat, lon, display_name} = data[0];
+						const latitude = parseFloat(lat);
+						const longitude = parseFloat(lon);
+						const newLatLng = L.latLng(latitude, longitude);
+
+						if (kinshasaBounds.contains(newLatLng)) {
+							map.setView(newLatLng, 15);
+							marker.setLatLng(newLatLng);
+							updateLatLng(latitude, longitude);
+							updateAddress(display_name);
+							document.getElementById('place').value = display_name;
+						} else {
+							alert('Location is outside of Kinshasa.');
+						}
+					} else {
+						alert('Location not found in Kinshasa!');
+					}
+				})
+				.catch(err => {
+					console.error('Error searching for place:', err);
+					alert('An error occurred while searching.');
+				});
+		}
+
+		// Allow searching by pressing Enter
+		document.getElementById('place').addEventListener('keypress', function (e) {
+			if (e.key === 'Enter') {
+				e.preventDefault(); // prevent form submission
+				searchPlace();
+			}
+		});
+
+	</script>
+			<!-- Preview & Filename Script -->
+			<script>
+		const input = document.getElementById('affiche');
+		const preview = document.getElementById('affichePreview');
+		const fileName = document.getElementById('fileName');
+
+		input.addEventListener('change', e => {
+			const file = e.target.files[0];
+			if (!file) return;
+			preview.src = URL.createObjectURL(file);
+			fileName.textContent = file.name.length > 20
+				? file.name.slice(0, 17) + '…'
+				: file.name;
+		});
+	</script>
+		</body>
+	</html>
+}

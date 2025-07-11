@@ -1,15 +1,17 @@
 -- name: GetUserByEmail :one
 SELECT * from users WHERE email = $1;
 
--- name: GetUserById :one
-SELECT * from users WHERE id = $1;
+-- name: NewUser :one
+INSERT INTO users (nom, prenom, email, password_hash, pseudonyme)
+VALUES($1, $2, $3, $4, $5)
+RETURNING *;
 
--- name: GetPasswordHash :one
-SELECT password_hash from users WHERE email = $1;
+-- name: UpdateDescription :exec
+UPDATE users 
+SET nom = $1, prenom=$2, description=$3, chemin_photo=$4, pseudonyme=$5
+WHERE email=$6;
 
--- name: GetUsers :many
-SELECT * from users;
-
--- name: NewUser :exec
-INSERT INTO users (nom, prenom, email, password_hash)
-VALUES($1, $2, $3, $4);
+-- name: UpdatePassword :exec
+UPDATE users
+SET password_hash = $1
+WHERE email=$2;

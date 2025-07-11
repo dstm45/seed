@@ -8,9 +8,12 @@ package user
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/dstm45/seed/pkg/views/component"
+import (
+	"github.com/dstm45/seed/pkg/database"
+	"github.com/dstm45/seed/pkg/views/component"
+)
 
-func Index(username string) templ.Component {
+func Index(utilisateur database.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -43,7 +46,46 @@ func Index(username string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "bienvenue ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"max-w-7xl mx-auto px-6 py-12 space-y-12\"><!-- Profile Section --><section class=\"bg-white shadow rounded-lg p-8\"><div class=\"flex flex-col md:flex-row items-center justify-between\"><!-- User Details --><div class=\"flex items-center\"><!-- Profile Photo --><img src=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(utilisateur.CheminPhoto.String)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 17, Col: 47}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" alt=\"Profile Photo\" class=\"w-32 h-32 rounded-full border-4 border-red-500 mr-8\"><!-- User Information --><div><h1 class=\"text-3xl font-bold text-gray-800\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(utilisateur.Pseudonyme.String)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 20, Col: 83}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h1><p class=\"mt-2 text-gray-600\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(utilisateur.Description.String)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 22, Col: 40}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p></div></div><!-- Modify Profile Button --><div class=\"mt-4 md:mt-0\"><a href=\"/editprofile\" class=\"bg-white text-red-500 border border-red-500 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-red-500 hover:text-white transition-all duration-300\">Edit Profile</a></div></div></section><section class=\"bg-white shadow rounded-lg p-8\"><h2 class=\"text-2xl font-bold text-gray-800 mb-6\">Your Events</h2><!-- Example Event Cards (this section can be dynamically rendered) --><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6\"><div class=\"border rounded-lg p-4\"><h3 class=\"text-xl font-bold text-gray-800\">Concert in the Park</h3><p class=\"mt-2 text-gray-600\">Enjoy a magical evening of live music under the stars at the central park.</p><p class=\"mt-2 text-gray-500\">Date: 2025-07-15</p><a href=\"/event/1\" class=\"mt-4 inline-block bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-2 px-4 rounded-full hover:opacity-90 transition-all duration-300\">View Event</a></div><div class=\"border rounded-lg p-4\"><h3 class=\"text-xl font-bold text-gray-800\">Art & Culture Expo</h3><p class=\"mt-2 text-gray-600\">Discover the vibrant world of art and culture in this immersive event.</p><p class=\"mt-2 text-gray-500\">Date: 2025-08-10</p><a href=\"/event/2\" class=\"mt-4 inline-block bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-2 px-4 rounded-full hover:opacity-90 transition-all duration-300\">View Event</a></div></div></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

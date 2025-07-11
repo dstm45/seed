@@ -2,6 +2,7 @@
 // versions:
 //   sqlc v1.29.0
 
+// Package database gère la connexion à la base de données et les requêtes.
 package database
 
 import (
@@ -9,13 +10,19 @@ import (
 )
 
 type Evenement struct {
-	ID            int64       `json:"id"`
-	Nom           pgtype.Text `json:"nom"`
-	Description   string      `json:"description"`
-	DebutVente    pgtype.Date `json:"debut_vente"`
-	FinVente      pgtype.Date `json:"fin_vente"`
-	DateEvenement pgtype.Date `json:"date_evenement"`
-	Organisateur  int64       `json:"organisateur"`
+	ID                int64            `json:"id"`
+	Nom               pgtype.Text      `json:"nom"`
+	Description       string           `json:"description"`
+	DebutVente        pgtype.Date      `json:"debut_vente"`
+	FinVente          pgtype.Date      `json:"fin_vente"`
+	DateEvenement     pgtype.Date      `json:"date_evenement"`
+	Organisateur      int64            `json:"organisateur"`
+	HeureEvenement    pgtype.Timestamp `json:"heure_evenement"`
+	LocationEvenement pgtype.Text      `json:"location_evenement"`
+	CheminPhoto       pgtype.Text      `json:"chemin_photo"`
+	Categorie         pgtype.Text      `json:"categorie"`
+	PrixBillet        pgtype.Float8    `json:"prix_billet"`
+	QuantiteBillet    pgtype.Int4      `json:"quantite_billet"`
 }
 
 type User struct {
@@ -25,4 +32,7 @@ type User struct {
 	Email        pgtype.Text `json:"email"`
 	TypeCompte   pgtype.Text `json:"type_compte"`
 	PasswordHash pgtype.Text `json:"password_hash"`
+	Pseudonyme   pgtype.Text `json:"pseudonyme"`
+	Description  pgtype.Text `json:"description"`
+	CheminPhoto  pgtype.Text `json:"chemin_photo"`
 }

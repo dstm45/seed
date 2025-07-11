@@ -1,64 +1,32 @@
 package component
 
+
 templ Base(role, title string) {
-    if role == "login" {
-        <!DOCTYPE html>
-        <html lang="fr">
-
+    <html lang="en">
         <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <script src="/script/script.js"></script>
-            <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-            <link rel="stylesheet" type="text/css" href="/static/css/output.css"/>
-            <title>{title}</title>
-            <style>
-                .blur-background::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-image: url('/static/images/ticket1.jpg');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                filter: blur(5px); /* Adjust the blur intensity as needed */
-                z-index: -1;
-                }
-                .blur-background {
-                position: relative;
-                overflow: hidden;
-                }
-            </style>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Sign In | EventHub</title>
+            <link rel="stylesheet" href="/static/css/output.css">
         </head>
-        <body class="min-h-screen flex flex-col bg-gray-100 blur-background">
-            <main class="flex-grow">
+        if role == "login" {
+            <body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 min-h-screen flex items-center justify-center">
                 {children...}
-            </main>
-        </body>
-        </html>
-    } else {
-        <!DOCTYPE html>
-        <html lang="fr">
-
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <script src="/script/script.js"></script>
-            <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-            <link rel="stylesheet" type="text/css" href="/static/css/output.css"/>
-            <title>{title}</title>
-        </head>
-
-        <body class="min-h-screen flex flex-col bg-gray-100">
-            @header()
-            <main class="flex-grow">
-                {children...}
-            </main>
-        </body>
-        </html>
-    }
+            </body>
+        } else if role == "admin" {
+            <body class="bg-gray-50">
+            <!-- Engaging Header -->
+            AdminHeader()
+            <!-- Main Content -->
+            {children...}
+            </body>
+        } else {
+            <body class="min-h-screen flex flex-col bg-gray-100">
+                @Header()
+                <main class="flex-grow">
+                    {children...}
+                </main>
+            </body>
+        }
+    </html>
 }

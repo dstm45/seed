@@ -1,3 +1,4 @@
+// Package utils contient des fonctions utilitaires pour l'application.
 package utils
 
 import (
@@ -11,6 +12,7 @@ import (
 
 type TokenClaim struct {
 	Email string `json:"email"`
+	Role  string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -19,6 +21,7 @@ var secret []byte = []byte(os.Getenv("SECRET"))
 func BuildToken(user database.User) *http.Cookie {
 	claims := TokenClaim{
 		Email: user.Email.String,
+		Role:  user.TypeCompte.String,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -41,11 +44,11 @@ func BuildToken(user database.User) *http.Cookie {
 	return &cookie
 }
 
-func ParseToken(r *http.Request) bool {
+func ParseToken(r *http.Request) (*TokenClaim, bool) {
 	cookie, err := r.Cookie("auth")
-	if err == http.ErrNoCookie {
+	if err != nil {
 		AfficherErreur("le cookie est inéxistant", err)
-		return false
+		return nil, false
 	}
 	tokenString := cookie.Value
 	token, err := jwt.ParseWithClaims(tokenString, &TokenClaim{}, func(token *jwt.Token) (interface{}, error) {
@@ -53,9 +56,44 @@ func ParseToken(r *http.Request) bool {
 	})
 	if err != nil {
 		AfficherErreur("Erreur lors du parsing du token", err)
-		return false
+		return nil, false
 	}
-	return token.Valid
+	claims, ok := token.Claims.(*TokenClaim)
+	if !ok {
+		AfficherErreur("Impossible de convertir les claims du token", nil)
+		return nil, false
+	}
+	if !token.Valid {
+		AfficherErreur("Token JWT invalide", nil)
+		return nil, false
+	}
+	return claims, true
+}
+
+func DecodeToken(r *http.Request) *TokenClaim {
+	cookie, err := r.Cookie("auth")
+	if err == http.ErrNoCookie {
+		AfficherErreur("Cookie Inexistant chez le client fonction decodetoken", err)
+		return nil
+	}
+	tokenString := cookie.Value
+	token, err := jwt.ParseWithClaims(tokenString, &TokenClaim{}, func(token *jwt.Token) (interface{}, error) {
+		return secret, nil
+	})
+	if err != nil {
+		AfficherErreur("Erreur lors du parsing du token", err)
+		return nil
+	}
+	claims, ok := token.Claims.(*TokenClaim)
+	if !ok {
+		AfficherErreur("Impossible de convertir les claims du token", nil)
+		return nil
+	}
+	if !token.Valid {
+		AfficherErreur("Token JWT invalide", nil)
+		return nil
+	}
+	return claims
 }
 
 func DeleteToken(w http.ResponseWriter) {

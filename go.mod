@@ -2,7 +2,7 @@ module github.com/dstm45/seed
 
 go 1.24.2
 
-require github.com/a-h/templ v0.3.898 // direct
+require github.com/a-h/templ v0.3.906 // direct
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.2

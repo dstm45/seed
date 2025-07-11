@@ -3,6 +3,7 @@
 //   sqlc v1.29.0
 // source: user.sql
 
+// Package database gère la connexion à la base de données et les requêtes.
 package database
 
 import (
@@ -11,19 +12,8 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const getPasswordHash = `-- name: GetPasswordHash :one
-SELECT password_hash from users WHERE email = $1
-`
-
-func (q *Queries) GetPasswordHash(ctx context.Context, email pgtype.Text) (pgtype.Text, error) {
-	row := q.db.QueryRow(ctx, getPasswordHash, email)
-	var password_hash pgtype.Text
-	err := row.Scan(&password_hash)
-	return password_hash, err
-}
-
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, nom, prenom, email, type_compte, password_hash from users WHERE email = $1
+SELECT id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo from users WHERE email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email pgtype.Text) (User, error) {
@@ -36,16 +26,35 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email pgtype.Text) (User, 
 		&i.Email,
 		&i.TypeCompte,
 		&i.PasswordHash,
+		&i.Pseudonyme,
+		&i.Description,
+		&i.CheminPhoto,
 	)
 	return i, err
 }
 
-const getUserById = `-- name: GetUserById :one
-SELECT id, nom, prenom, email, type_compte, password_hash from users WHERE id = $1
+const newUser = `-- name: NewUser :one
+INSERT INTO users (nom, prenom, email, password_hash, pseudonyme)
+VALUES($1, $2, $3, $4, $5)
+RETURNING id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo
 `
 
-func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
-	row := q.db.QueryRow(ctx, getUserById, id)
+type NewUserParams struct {
+	Nom          pgtype.Text `json:"nom"`
+	Prenom       pgtype.Text `json:"prenom"`
+	Email        pgtype.Text `json:"email"`
+	PasswordHash pgtype.Text `json:"password_hash"`
+	Pseudonyme   pgtype.Text `json:"pseudonyme"`
+}
+
+func (q *Queries) NewUser(ctx context.Context, arg NewUserParams) (User, error) {
+	row := q.db.QueryRow(ctx, newUser,
+		arg.Nom,
+		arg.Prenom,
+		arg.Email,
+		arg.PasswordHash,
+		arg.Pseudonyme,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -54,59 +63,52 @@ func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
 		&i.Email,
 		&i.TypeCompte,
 		&i.PasswordHash,
+		&i.Pseudonyme,
+		&i.Description,
+		&i.CheminPhoto,
 	)
 	return i, err
 }
 
-const getUsers = `-- name: GetUsers :many
-SELECT id, nom, prenom, email, type_compte, password_hash from users
+const updateDescription = `-- name: UpdateDescription :exec
+UPDATE users 
+SET nom = $1, prenom=$2, description=$3, chemin_photo=$4, pseudonyme=$5
+WHERE email=$6
 `
 
-func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
-	rows, err := q.db.Query(ctx, getUsers)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []User
-	for rows.Next() {
-		var i User
-		if err := rows.Scan(
-			&i.ID,
-			&i.Nom,
-			&i.Prenom,
-			&i.Email,
-			&i.TypeCompte,
-			&i.PasswordHash,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+type UpdateDescriptionParams struct {
+	Nom         pgtype.Text `json:"nom"`
+	Prenom      pgtype.Text `json:"prenom"`
+	Description pgtype.Text `json:"description"`
+	CheminPhoto pgtype.Text `json:"chemin_photo"`
+	Pseudonyme  pgtype.Text `json:"pseudonyme"`
+	Email       pgtype.Text `json:"email"`
 }
 
-const newUser = `-- name: NewUser :exec
-INSERT INTO users (nom, prenom, email, password_hash)
-VALUES($1, $2, $3, $4)
-`
-
-type NewUserParams struct {
-	Nom          pgtype.Text `json:"nom"`
-	Prenom       pgtype.Text `json:"prenom"`
-	Email        pgtype.Text `json:"email"`
-	PasswordHash pgtype.Text `json:"password_hash"`
-}
-
-func (q *Queries) NewUser(ctx context.Context, arg NewUserParams) error {
-	_, err := q.db.Exec(ctx, newUser,
+func (q *Queries) UpdateDescription(ctx context.Context, arg UpdateDescriptionParams) error {
+	_, err := q.db.Exec(ctx, updateDescription,
 		arg.Nom,
 		arg.Prenom,
+		arg.Description,
+		arg.CheminPhoto,
+		arg.Pseudonyme,
 		arg.Email,
-		arg.PasswordHash,
 	)
+	return err
+}
+
+const updatePassword = `-- name: UpdatePassword :exec
+UPDATE users
+SET password_hash = $1
+WHERE email=$2
+`
+
+type UpdatePasswordParams struct {
+	PasswordHash pgtype.Text `json:"password_hash"`
+	Email        pgtype.Text `json:"email"`
+}
+
+func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) error {
+	_, err := q.db.Exec(ctx, updatePassword, arg.PasswordHash, arg.Email)
 	return err
 }

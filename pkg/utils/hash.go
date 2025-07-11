@@ -1,12 +1,10 @@
+// Package utils contient des fonctions utilitaires pour l'application.
 package utils
 
 import (
-	"context"
 	"log"
 	"os"
 
-	"github.com/dstm45/seed/pkg/database"
-	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,16 +18,7 @@ func Hasher(motDePasse string) string {
 	return string(hash)
 }
 
-func ComparerHash(motDePasse, email string) bool {
-	ctx := context.Background()
-	conn := database.Connection()
-	db := database.New(conn)
-	defer conn.Close(ctx)
-	hash, err := db.GetPasswordHash(ctx, pgtype.Text{String: email, Valid: true})
-	if err != nil {
-		AfficherErreur("Erreur lors du retrait du hash dans la base de donnée", err)
-		return false
-	}
-	err = bcrypt.CompareHashAndPassword([]byte(hash.String), []byte(motDePasse))
+func ComparerHash(motDePasse, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(motDePasse))
 	return err == nil
 }
