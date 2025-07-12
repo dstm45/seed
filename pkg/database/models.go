@@ -2,7 +2,6 @@
 // versions:
 //   sqlc v1.29.0
 
-// Package database gère la connexion à la base de données et les requêtes.
 package database
 
 import (

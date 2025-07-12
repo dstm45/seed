@@ -27,11 +27,11 @@ func NewServer() *Myserver {
 	auth := controllers.AuthController{
 		DB: db,
 	}
-	// user controllers
-	index := middlewares.IsAuthenticated(user.UserIndex)
+	index := middlewares.IsAuthenticated(user.Index)
 	editprofile := middlewares.IsAuthenticated(user.EditProfile)
 	editpassword := middlewares.IsAuthenticated(user.EditPassword)
-	// admin controllers
+	evenement := middlewares.IsAuthenticated(user.Event)
+
 	settings := middlewares.IsAdmin(admin.Settings)
 	dashboard := middlewares.IsAdmin(admin.Dashboard)
 	manageusers := middlewares.IsAdmin(admin.ManageUsers)
@@ -50,7 +50,7 @@ func NewServer() *Myserver {
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/editprofile", editprofile)
 	mux.HandleFunc("/editpassword", editpassword)
-	mux.HandleFunc("GET /evenement", user.UserEvent)
+	mux.HandleFunc("GET /evenement/detail/{id}", evenement)
 	// admin
 	mux.HandleFunc("GET /admin/dashboard", dashboard)
 	mux.HandleFunc("GET /admin/settings", settings)

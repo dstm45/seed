@@ -2,12 +2,12 @@
 package controllers
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/dstm45/seed/pkg/database"
@@ -18,37 +18,49 @@ import (
 )
 
 type UserController struct {
-	DB  *database.Queries
-	Ctx context.Context
+	DB *database.Queries
 }
 
-func (controller UserController) UserIndex(w http.ResponseWriter, r *http.Request) {
+func (c UserController) Index(w http.ResponseWriter, r *http.Request) {
 	claim := utils.DecodeToken(r)
 	ctx := r.Context()
 	switch r.Method {
 	case http.MethodGet:
-		utilisateur, err := controller.DB.GetUserByEmail(ctx, pgtype.Text{String: claim.Email, Valid: true})
+		utilisateur, err := c.DB.GetUserByEmail(ctx, pgtype.Text{String: claim.Email, Valid: true})
 		if err != nil {
 			utils.AfficherErreur("Erreur lors de l'accès de l'email dans la fonction index", err)
+			return
 		}
-		template := user.Index(utilisateur)
+		evenements, err := c.DB.GetEventByUserEmail(r.Context(), pgtype.Text{String: claim.Email, Valid: true})
+		if err != nil {
+			utils.AfficherErreur("Erreur lors du retrait des évenements dans la base de données", err)
+			return
+		}
+		template := user.Index(utilisateur, evenements)
 		template.Render(ctx, w)
 	}
 }
 
-func (controller UserController) UserEvent(w http.ResponseWriter, r *http.Request) {
-	template := user.Evenement()
-	template.Render(controller.Ctx, w)
+func (c UserController) Event(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		utils.AfficherErreur("Erreur lors de la recupération de l'id ", err)
+		return
+	}
+	evenement, err := c.DB.GetEventByID(r.Context(), id)
+	if err != nil {
+		utils.AfficherErreur("Erreur lors du retrait de l'évenement dans la base de données", err)
+		return
+	}
+	template := user.Evenement(evenement)
+	template.Render(r.Context(), w)
 }
 
-func (controller UserController) UserProfile(w http.ResponseWriter, r *http.Request) {
-}
-
-func (controller UserController) EditProfile(w http.ResponseWriter, r *http.Request) {
+func (c UserController) EditProfile(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		userInfo := utils.DecodeToken(r)
-		utilisateur, err := controller.DB.GetUserByEmail(r.Context(), pgtype.Text{String: userInfo.Email, Valid: true})
+		utilisateur, err := c.DB.GetUserByEmail(r.Context(), pgtype.Text{String: userInfo.Email, Valid: true})
 		if err != nil {
 			utils.AfficherErreur("Erreur lors du retrait de l'utilisateur dans la base de données", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -100,7 +112,7 @@ func (controller UserController) EditProfile(w http.ResponseWriter, r *http.Requ
 		userInfo := utils.DecodeToken(r)
 
 		if webPath == "" {
-			currentUser, err := controller.DB.GetUserByEmail(r.Context(), pgtype.Text{String: userInfo.Email, Valid: true})
+			currentUser, err := c.DB.GetUserByEmail(r.Context(), pgtype.Text{String: userInfo.Email, Valid: true})
 			if err != nil {
 				utils.AfficherErreur("Erreur lors de la récupération des informations utilisateur", err)
 				http.Error(w, "Erreur serveur", http.StatusInternalServerError)
@@ -118,7 +130,7 @@ func (controller UserController) EditProfile(w http.ResponseWriter, r *http.Requ
 			Email:       pgtype.Text{String: userInfo.Email, Valid: true},
 		}
 
-		err = controller.DB.UpdateDescription(r.Context(), newInformations)
+		err = c.DB.UpdateDescription(r.Context(), newInformations)
 		if err != nil {
 			utils.AfficherErreur("Erreur mise à jour utilisateur", err)
 			http.Error(w, "Erreur lors de la mise à jour", http.StatusInternalServerError)
@@ -137,7 +149,7 @@ func (controller UserController) EditProfile(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func (controller UserController) EditPassword(w http.ResponseWriter, r *http.Request) {
+func (c UserController) EditPassword(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		template := user.ChangePassword()
@@ -158,7 +170,7 @@ func (controller UserController) EditPassword(w http.ResponseWriter, r *http.Req
 			PasswordHash: pgtype.Text{String: passwordHash, Valid: true},
 			Email:        pgtype.Text{String: utils.DecodeToken(r).Email, Valid: true},
 		}
-		err = controller.DB.UpdatePassword(r.Context(), parameters)
+		err = c.DB.UpdatePassword(r.Context(), parameters)
 		if err != nil {
 			utils.AfficherErreur("Erreur lors de la mise à jour du mot de passe", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -176,7 +188,7 @@ func (controller UserController) EditPassword(w http.ResponseWriter, r *http.Req
 	}
 }
 
-func (controller UserController) AddEvent(w http.ResponseWriter, r *http.Request) {
+func (c UserController) AddEvent(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		template := user.AddEvent()

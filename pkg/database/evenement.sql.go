@@ -3,7 +3,6 @@
 //   sqlc v1.29.0
 // source: evenement.sql
 
-// Package database gère la connexion à la base de données et les requêtes.
 package database
 
 import (
@@ -11,6 +10,71 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+const getEventByID = `-- name: GetEventByID :one
+SELECT id, nom, description, debut_vente, fin_vente, date_evenement, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet FROM evenements WHERE id=$1
+`
+
+func (q *Queries) GetEventByID(ctx context.Context, id int64) (Evenement, error) {
+	row := q.db.QueryRow(ctx, getEventByID, id)
+	var i Evenement
+	err := row.Scan(
+		&i.ID,
+		&i.Nom,
+		&i.Description,
+		&i.DebutVente,
+		&i.FinVente,
+		&i.DateEvenement,
+		&i.Organisateur,
+		&i.HeureEvenement,
+		&i.LocationEvenement,
+		&i.CheminPhoto,
+		&i.Categorie,
+		&i.PrixBillet,
+		&i.QuantiteBillet,
+	)
+	return i, err
+}
+
+const getEventByUserEmail = `-- name: GetEventByUserEmail :many
+SELECT ev.id, ev.nom, ev.description, ev.debut_vente, ev.fin_vente, ev.date_evenement, ev.organisateur, ev.heure_evenement, ev.location_evenement, ev.chemin_photo, ev.categorie, ev.prix_billet, ev.quantite_billet FROM evenements ev
+LEFT JOIN users u ON ev.organisateur = u.id
+WHERE u.email = $1
+`
+
+func (q *Queries) GetEventByUserEmail(ctx context.Context, email pgtype.Text) ([]Evenement, error) {
+	rows, err := q.db.Query(ctx, getEventByUserEmail, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Evenement
+	for rows.Next() {
+		var i Evenement
+		if err := rows.Scan(
+			&i.ID,
+			&i.Nom,
+			&i.Description,
+			&i.DebutVente,
+			&i.FinVente,
+			&i.DateEvenement,
+			&i.Organisateur,
+			&i.HeureEvenement,
+			&i.LocationEvenement,
+			&i.CheminPhoto,
+			&i.Categorie,
+			&i.PrixBillet,
+			&i.QuantiteBillet,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
 
 const newEvent = `-- name: NewEvent :exec
 INSERT INTO 

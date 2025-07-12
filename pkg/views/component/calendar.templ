@@ -1,0 +1,110 @@
+package component
+
+templ Calendrier() {
+<div class="bg-white shadow-lg rounded-2xl p-4 w-full max-w-md">
+  <div class="flex justify-between items-center mb-2">
+    <button id="prev" class="px-3 py-1 rounded hover:bg-gray-200">&larr;</button>
+    <h2 id="monthYear" class="text-lg font-semibold"></h2>
+    <button id="next" class="px-3 py-1 rounded hover:bg-gray-200">&rarr;</button>
+  </div>
+  <!-- Display current date in DD-MM-YYYY format -->
+  <div class="text-center mb-4">
+    <span class="font-medium">Date:</span>
+    <span id="formattedDate" class="ml-1 text-purple-600"></span>
+  </div>
+  <div class="grid grid-cols-7 gap-2 text-center text-sm">
+    <div class="text-gray-500">Di</div>
+    <div class="text-gray-500">Lu</div>
+    <div class="text-gray-500">Ma</div>
+    <div class="text-gray-500">Me</div>
+    <div class="text-gray-500">Je</div>
+    <div class="text-gray-500">Ve</div>
+    <div class="text-gray-500">Sa</div>
+    <div id="days" class="contents"></div>
+  </div>
+</div>
+<script>
+  const monthYearEl = document.getElementById('monthYear');
+  const daysContainer = document.getElementById('days');
+  const formattedDateEl = document.getElementById('formattedDate');
+  const today = new Date();
+  // Set time to 0 to avoid timezone issues with date comparison
+  today.setHours(0, 0, 0, 0);
+
+  let selectedDate = new Date(today);
+  let currentMonth = selectedDate.getMonth();
+  let currentYear = selectedDate.getFullYear();
+
+  function pad(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function updateFormattedDate() {
+    formattedDateEl.textContent = `${pad(selectedDate.getDate())}-${pad(selectedDate.getMonth() + 1)}-${selectedDate.getFullYear()}`;
+  }
+
+  function renderCalendar(month, year) {
+    daysContainer.innerHTML = '';
+    monthYearEl.textContent = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(year, month));
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const firstDayIndex = firstDayOfMonth.getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Empty slots for days of week before 1st of month
+    for (let i = 0; i < firstDayIndex; i++) {
+      daysContainer.appendChild(document.createElement('div'));
+    }
+
+    // Calendar days
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayEl = document.createElement('div');
+      dayEl.textContent = d;
+      dayEl.className = 'py-2 rounded cursor-pointer hover:bg-purple-100';
+      
+      const currentDate = new Date(year, month, d);
+
+      // Highlight today's date
+      if (currentDate.getTime() === today.getTime()) {
+        dayEl.classList.add('bg-purple-200');
+      }
+
+      // Highlight selected date
+      if (currentDate.getTime() === selectedDate.getTime()) {
+        dayEl.classList.add('bg-purple-600', 'text-white');
+      }
+
+      dayEl.addEventListener('click', () => {
+        selectedDate = new Date(year, month, d);
+        updateFormattedDate();
+        // Re-render to update highlights
+        renderCalendar(currentMonth, currentYear);
+      });
+
+      daysContainer.appendChild(dayEl);
+    }
+  }
+
+  document.getElementById('prev').addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  document.getElementById('next').addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  // Initial setup
+  updateFormattedDate();
+  renderCalendar(currentMonth, currentYear);
+</script>
+}
