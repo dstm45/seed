@@ -188,6 +188,24 @@ func (c UserController) EditPassword(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (c UserController) ShowEvent(w http.ResponseWriter, r *http.Request) {
+	evenements, err := c.DB.GetAllEvent(r.Context())
+	if err != nil {
+		utils.AfficherErreur("Erreur lors du retrait des utilisateur dans la base de données dans la fonction show event", err)
+		return
+	}
+	if err != nil {
+		utils.AfficherErreur("Erreur lors du retrait de l'utilisateur dans la base de données", err)
+		return
+	}
+	template := user.Liste(c.DB, evenements)
+	err = template.Render(r.Context(), w)
+	if err != nil {
+		utils.AfficherErreur("Erreur lors du rendu de la fonction showevent", err)
+		return
+	}
+}
+
 func (c UserController) AddEvent(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:

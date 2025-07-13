@@ -50,6 +50,7 @@ func NewServer() *Myserver {
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/editprofile", editprofile)
 	mux.HandleFunc("/editpassword", editpassword)
+	mux.HandleFunc("/liste", user.ShowEvent)
 	mux.HandleFunc("GET /evenement/detail/{id}", evenement)
 	// admin
 	mux.HandleFunc("GET /admin/dashboard", dashboard)

@@ -10,3 +10,7 @@ WHERE u.email = $1;
 
 -- name: GetEventByID :one
 SELECT * FROM evenements WHERE id=$1;
+
+-- name: GetAllEvent :many
+SELECT * from evenements;
+

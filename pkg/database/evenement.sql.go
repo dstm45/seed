@@ -11,6 +11,44 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const getAllEvent = `-- name: GetAllEvent :many
+SELECT id, nom, description, debut_vente, fin_vente, date_evenement, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet from evenements
+`
+
+func (q *Queries) GetAllEvent(ctx context.Context) ([]Evenement, error) {
+	rows, err := q.db.Query(ctx, getAllEvent)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Evenement
+	for rows.Next() {
+		var i Evenement
+		if err := rows.Scan(
+			&i.ID,
+			&i.Nom,
+			&i.Description,
+			&i.DebutVente,
+			&i.FinVente,
+			&i.DateEvenement,
+			&i.Organisateur,
+			&i.HeureEvenement,
+			&i.LocationEvenement,
+			&i.CheminPhoto,
+			&i.Categorie,
+			&i.PrixBillet,
+			&i.QuantiteBillet,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getEventByID = `-- name: GetEventByID :one
 SELECT id, nom, description, debut_vente, fin_vente, date_evenement, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet FROM evenements WHERE id=$1
 `

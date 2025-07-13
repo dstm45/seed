@@ -5,8 +5,9 @@ templ Header() {
   <div class="relative z-10 max-w-7xl mx-auto px-6 py-6 md:py-8 flex flex-col md:flex-row justify-between items-center">
     <!-- Logo Section -->
     <div class="mb-4 md:mb-0">
-      <a href="/"
-        class="text-3xl font-extrabold tracking-wide hover:scale-105 transition-transform duration-300">EventHub</a>
+      <a href="/" class="text-3xl font-extrabold tracking-wide hover:scale-105 transition-transform duration-300">
+        EventHub
+      </a>
     </div>
     <!-- Navigation Menu -->
     <nav class="mb-4 md:mb-0">
@@ -15,14 +16,13 @@ templ Header() {
           <a href="#concerts" class="hover:text-gray-200 transition-colors duration-300">Concerts</a>
         </li>
         <li>
-          <a href="#shows" class="hover:text-gray-200 transition-colors duration-300">Spectacle</a>
+          <a href="#shows" class="hover:text-gray-200 transition-colors duration-300">Spectacles</a>
         </li>
         <li>
-          <a href="#seminars" class="hover:text-gray-200 transition-colors duration-300">Seminaire</a>
+          <a href="#seminars" class="hover:text-gray-200 transition-colors duration-300">Séminaires</a>
         </li>
         <li>
-          <a href={ templ.SafeURL("/logout") } class="hover:text-gray-200 transition-colors duration-300">Se
-            deconnecter</a>
+          <a href="/logout" class="hover:text-gray-200 transition-colors duration-300">Se déconnecter</a>
         </li>
       </ul>
     </nav>
@@ -30,19 +30,11 @@ templ Header() {
     <div>
       <a href="/buy-tickets"
         class="bg-white text-red-500 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-gray-200 transition-all duration-300">
-        Buy Tickets
+        Acheter Billets
       </a>
     </div>
   </div>
-  <!-- Decorative Floating SVG -->
-  <div class="absolute right-0 bottom-0 md:bottom-10 opacity-70 float-animation">
-    <svg class="w-32 h-32 md:w-48 md:h-48" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#FFCDD2"
-        d="M42.3,-64.2C55.8,-56.7,67.8,-44.3,72.8,-29.3C77.8,-14.4,75.8,2.3,70.7,17.5C65.7,32.7,57.7,46.4,46.8,54.5C35.9,62.6,22.1,65.1,7.5,68.4C-7.1,71.7,-21.8,75.9,-34.3,73.3C-46.7,70.8,-57,61.4,-65.3,49.8C-73.6,38.2,-79.8,24.4,-83.2,9.9C-86.6,-4.6,-87.2,-20.8,-80.2,-33.9C-73.2,-47,-58.7,-57,-43.1,-64.7C-27.5,-72.4,-13.8,-77.7,1.6,-80.6C17,-83.4,34,-84.2,42.3,-64.2Z"
-        transform="translate(100 100)"></path>
-    </svg>
-  </div>
-  <!-- Background Overlay for Depth -->
+  <!-- Decorative Background -->
   <div class="absolute inset-0 bg-black opacity-20"></div>
 </header>
 }

@@ -1,5 +1,5 @@
 -- name: GetUserByEmail :one
-SELECT * from users WHERE email = $1;
+SELECT * FROM users WHERE email = $1;
 
 -- name: NewUser :one
 INSERT INTO users (nom, prenom, email, password_hash, pseudonyme)
@@ -15,3 +15,6 @@ WHERE email=$6;
 UPDATE users
 SET password_hash = $1
 WHERE email=$2;
+
+-- name: GetUserByID :one
+SELECT * FROM users WHERE id=$1;

@@ -12,11 +12,32 @@ import (
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo from users WHERE email = $1
+SELECT id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo FROM users WHERE email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email pgtype.Text) (User, error) {
 	row := q.db.QueryRow(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Nom,
+		&i.Prenom,
+		&i.Email,
+		&i.TypeCompte,
+		&i.PasswordHash,
+		&i.Pseudonyme,
+		&i.Description,
+		&i.CheminPhoto,
+	)
+	return i, err
+}
+
+const getUserByID = `-- name: GetUserByID :one
+SELECT id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo FROM users WHERE id=$1
+`
+
+func (q *Queries) GetUserByID(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByID, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
