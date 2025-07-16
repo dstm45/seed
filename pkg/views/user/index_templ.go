@@ -135,9 +135,9 @@ func Index(utilisateur database.User, evenements []database.Evenement) templ.Com
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 templ.SafeURL
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/evenement/detail/%d", evenement.ID))
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/evenement/detail/%s", evenement.Uuid.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 45, Col: 63}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 45, Col: 74}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -148,9 +148,9 @@ func Index(utilisateur database.User, evenements []database.Evenement) templ.Com
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 templ.SafeURL
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/evenement/edit/%d", evenement.ID))
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/evenement/edit/%s", evenement.Uuid.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 50, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 50, Col: 72}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -161,9 +161,9 @@ func Index(utilisateur database.User, evenements []database.Evenement) templ.Com
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 templ.SafeURL
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/evenement/delete/%d", evenement.ID))
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/evenement/delete/%s", evenement.Uuid.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 55, Col: 68}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/views/user/index.templ`, Line: 55, Col: 79}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {

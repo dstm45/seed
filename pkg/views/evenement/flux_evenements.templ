@@ -1,0 +1,299 @@
+package evenement
+
+import (
+	"context"
+	"github.com/dstm45/seed/pkg/database"
+	"github.com/dstm45/seed/pkg/views/component"
+)
+
+templ FluxEvenement(DB *database.Queries, evenements []database.Evenement) {
+	@component.Base("", "Liste d'activité") {
+		<div class="max-w-4xl mx-auto px-4 py-8">
+			<!-- Filter Section -->
+			<div class="mb-8">
+				<div class="flex justify-between items-center mb-4">
+					<h1 class="text-3xl font-bold text-gray-800">Découvrez les Événements</h1>
+					<button
+						onclick="toggleFilters()"
+						class="flex items-center gap-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2"
+					>
+						<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+						</svg>
+						Filtres
+					</button>
+				</div>
+				<!-- Filter Bar -->
+				<div id="filterBar" class="bg-white rounded-lg shadow-md p-4 mb-6 animate-fade-in hidden">
+					<div class="flex flex-wrap gap-3">
+						<button
+							onclick="filterEvents('all')"
+							class="filter-btn active flex items-center space-x-2 transition-all duration-200 bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2"
+						>
+							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+								<line x1="16" y1="2" x2="16" y2="6"></line>
+								<line x1="8" y1="2" x2="8" y2="6"></line>
+								<line x1="3" y1="10" x2="21" y2="10"></line>
+							</svg>
+							<span>Tous</span>
+						</button>
+						<button
+							onclick="filterEvents('concerts')"
+							class="filter-btn flex items-center space-x-2 transition-all duration-200 hover:bg-purple-50 hover:border-purple-300 border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2"
+						>
+							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path d="M9 18V5l12-2v13"></path>
+								<circle cx="6" cy="18" r="3"></circle>
+								<circle cx="18" cy="16" r="3"></circle>
+							</svg>
+							<span>Concerts</span>
+						</button>
+						<button
+							onclick="filterEvents('shows')"
+							class="filter-btn flex items-center space-x-2 transition-all duration-200 hover:bg-purple-50 hover:border-purple-300 border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2"
+						>
+							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"
+								></path>
+								<line x1="2" y1="20" x2="2.01" y2="20"></line>
+							</svg>
+							<span>Spectacles</span>
+						</button>
+						<button
+							onclick="filterEvents('seminars')"
+							class="filter-btn flex items-center space-x-2 transition-all duration-200 hover:bg-purple-50 hover:border-purple-300 border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2"
+						>
+							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+								<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+							</svg>
+							<span>Séminaires</span>
+						</button>
+					</div>
+				</div>
+			</div>
+			<!-- Events Feed -->
+			<div class="space-y-8" id="eventsContainer">
+				for _, evenement := range evenements {
+					{{ utilisateur, _ := DB.GetUserByID(context.Background(), evenement.Organisateur) }}
+					<div
+						class="event-card concerts overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white rounded-lg border bg-card text-card-foreground shadow-sm"
+					>
+						<!-- User Profile Header -->
+						<div class="p-4 border-b">
+							<div class="flex items-center space-x-3">
+								<img
+									src={ utilisateur.CheminPhoto.String }
+									alt={ utilisateur.Pseudonyme.String }
+									class="w-12 h-12 rounded-full object-cover border-2 border-purple-200"
+								/>
+								<div class="flex-1">
+									<div class="flex items-center space-x-2">
+										<h3 class="font-semibold text-gray-800 hover:text-purple-600 cursor-pointer transition-colors">
+											{ utilisateur.Pseudonyme.String }
+										</h3>
+										<svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+											<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+										</svg>
+									</div>
+									<p class="text-sm text-gray-500">{ utilisateur.Description.String }</p>
+								</div>
+								<button
+									class="text-purple-600 hover:text-purple-700 font-medium text-sm hover:bg-purple-50 px-3 py-1 rounded-lg transition-all"
+								>Suivre</button>
+							</div>
+						</div>
+						<!-- Event Image -->
+						<div class="relative">
+							<img
+								src={ evenement.CheminPhoto.String }
+								alt="Summer Music Festival 2024"
+								class="w-full h-64 md:h-80 object-cover"
+							/>
+							<div class="absolute top-4 left-4">
+								<span class="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+									{ evenement.Categorie.String }
+								</span>
+							</div>
+							<div class="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white px-3 py-2 rounded-lg">
+								<span class="text-2xl font-bold">{ evenement.PrixBillet.Float64 }$</span>
+							</div>
+						</div>
+						<div class="p-6 pt-0">
+							<!-- Event Title -->
+							<h2 class="text-2xl font-bold text-gray-800 mb-3 hover:text-purple-600 transition-colors cursor-pointer">
+								{ evenement.Nom.String }
+							</h2>
+							<!-- Event Description -->
+							<p class="text-gray-600 mb-4 leading-relaxed">{ evenement.Description }</p>
+							<!-- Event Details -->
+							<div class="space-y-3 mb-6">
+								<div class="flex items-center text-gray-700">
+									<svg class="mr-3 h-5 w-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+										<line x1="16" y1="2" x2="16" y2="6"></line>
+										<line x1="8" y1="2" x2="8" y2="6"></line>
+										<line x1="3" y1="10" x2="21" y2="10"></line>
+									</svg>
+									<span class="font-medium">
+										{ evenement.DateEvenement.Time.Format("02 Jan 2006") } à
+										{ evenement.HeureEvenement.Time.Format("15h04") }
+									</span>
+								</div>
+								<div class="flex items-center text-gray-700">
+									<svg class="mr-3 h-5 w-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+										<circle cx="12" cy="10" r="3"></circle>
+									</svg>
+									<span>{ evenement.LocationEvenement.String }</span>
+								</div>
+								<div class="flex items-center text-gray-700">
+									<svg class="mr-3 h-5 w-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+										<circle cx="9" cy="7" r="4"></circle>
+										<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+										<path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+									</svg>
+									<span>1250 personnes intéressées</span>
+								</div>
+							</div>
+							<!-- Action Buttons -->
+							<div class="flex flex-col sm:flex-row gap-3 mb-4">
+								<button
+									class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+								>
+									Acheter Billets - { evenement.PrixBillet.Float64 }$
+								</button>
+								<button
+									class="flex-1 border-purple-300 text-purple-600 hover:bg-purple-50 py-3 px-6 rounded-lg transition-all duration-300 border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+								>
+									Intéressé(e)
+								</button>
+							</div>
+							<!-- Social Actions -->
+							<div class="border-t pt-4">
+								<div class="flex justify-between items-center">
+									<div class="flex space-x-6">
+										<button
+											onclick="likeEvent(this)"
+											class="flex items-center space-x-2 text-gray-600 hover:text-red-500 hover:bg-red-50 transition-all duration-200 hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 rounded-md px-3"
+										>
+											<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path
+													d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+												></path>
+											</svg>
+											<span class="like-count">89</span>
+										</button>
+										<button
+											class="flex items-center space-x-2 text-gray-600 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200 hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 rounded-md px-3"
+										>
+											<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+											</svg>
+											<span>23</span>
+										</button>
+										<button
+											onclick="shareEvent(this)"
+											class="flex items-center space-x-2 text-gray-600 hover:text-green-500 hover:bg-green-50 transition-all duration-200 hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 rounded-md px-3"
+										>
+											<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+												<polyline points="16,6 12,2 8,6"></polyline>
+												<line x1="12" y1="2" x2="12" y2="15"></line>
+											</svg>
+											<span class="share-count">12</span>
+										</button>
+									</div>
+									<div class="text-sm text-gray-500">Il y a 2 heures</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+				<!-- Event Card 1 -->
+			</div>
+			<!-- Empty State (hidden by default) -->
+			<div id="emptyState" class="text-center py-12 hidden">
+				<div class="text-6xl mb-4">🎭</div>
+				<h2 class="text-2xl font-bold text-gray-600 mb-2">Aucun événement trouvé</h2>
+				<p class="text-gray-500">Essayez de modifier vos filtres pour voir plus d'événements.</p>
+			</div>
+		</div>
+		<script>
+	let filtersVisible = false;
+	let currentFilter = 'all';
+
+	function toggleFilters() {
+		const filterBar = document.getElementById('filterBar');
+		filtersVisible = !filtersVisible;
+
+		if (filtersVisible) {
+			filterBar.classList.remove('hidden');
+		} else {
+			filterBar.classList.add('hidden');
+		}
+	}
+
+	function filterEvents(type) {
+		currentFilter = type;
+		const eventCards = document.querySelectorAll('.event-card');
+		const emptyState = document.getElementById('emptyState');
+		const filterBtns = document.querySelectorAll('.filter-btn');
+
+		// Update button states
+		filterBtns.forEach(btn => {
+			btn.classList.remove('active', 'bg-gradient-to-r', 'from-purple-600', 'to-pink-600', 'text-white', 'shadow-lg');
+			btn.classList.add('border', 'border-input', 'bg-background', 'hover:bg-accent', 'hover:text-accent-foreground');
+		});
+
+		event.target.classList.add('active', 'bg-gradient-to-r', 'from-purple-600', 'to-pink-600', 'text-white', 'shadow-lg');
+		event.target.classList.remove('border', 'border-input', 'bg-background', 'hover:bg-accent', 'hover:text-accent-foreground');
+
+		let visibleCards = 0;
+
+		eventCards.forEach(card => {
+			if (type === 'all' || card.classList.contains(type)) {
+				card.style.display = 'block';
+				visibleCards++;
+			} else {
+				card.style.display = 'none';
+			}
+		});
+
+		// Show/hide empty state
+		if (visibleCards === 0) {
+			emptyState.classList.remove('hidden');
+		} else {
+			emptyState.classList.add('hidden');
+		}
+	}
+
+	function likeEvent(button) {
+		const likeCount = button.querySelector('.like-count');
+		const currentCount = parseInt(likeCount.textContent);
+		likeCount.textContent = currentCount + 1;
+
+		// Add visual feedback
+		button.classList.add('text-red-500');
+		setTimeout(() => {
+			button.classList.remove('text-red-500');
+		}, 300);
+	}
+
+	function shareEvent(button) {
+		const shareCount = button.querySelector('.share-count');
+		const currentCount = parseInt(shareCount.textContent);
+		shareCount.textContent = currentCount + 1;
+
+		// Add visual feedback
+		button.classList.add('text-green-500');
+		setTimeout(() => {
+			button.classList.remove('text-green-500');
+		}, 300);
+	}
+</script>
+	}
+}

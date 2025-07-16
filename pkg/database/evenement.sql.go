@@ -8,11 +8,27 @@ package database
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const deleteEventByUUID = `-- name: DeleteEventByUUID :exec
+DELETE FROM 
+  evenements 
+WHERE 
+  uuid=$1
+`
+
+func (q *Queries) DeleteEventByUUID(ctx context.Context, argUuid uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteEventByUUID, argUuid)
+	return err
+}
+
 const getAllEvent = `-- name: GetAllEvent :many
-SELECT id, nom, description, debut_vente, fin_vente, date_evenement, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet from evenements
+SELECT 
+  id, nom, description, debut_vente, fin_vente, date_evenement, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet, likes, uuid 
+FROM 
+  evenements
 `
 
 func (q *Queries) GetAllEvent(ctx context.Context) ([]Evenement, error) {
@@ -38,6 +54,8 @@ func (q *Queries) GetAllEvent(ctx context.Context) ([]Evenement, error) {
 			&i.Categorie,
 			&i.PrixBillet,
 			&i.QuantiteBillet,
+			&i.Likes,
+			&i.Uuid,
 		); err != nil {
 			return nil, err
 		}
@@ -49,12 +67,17 @@ func (q *Queries) GetAllEvent(ctx context.Context) ([]Evenement, error) {
 	return items, nil
 }
 
-const getEventByID = `-- name: GetEventByID :one
-SELECT id, nom, description, debut_vente, fin_vente, date_evenement, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet FROM evenements WHERE id=$1
+const getEventByUUID = `-- name: GetEventByUUID :one
+SELECT
+  id, nom, description, debut_vente, fin_vente, date_evenement, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet, likes, uuid 
+FROM 
+  evenements 
+WHERE 
+  uuid=$1
 `
 
-func (q *Queries) GetEventByID(ctx context.Context, id int64) (Evenement, error) {
-	row := q.db.QueryRow(ctx, getEventByID, id)
+func (q *Queries) GetEventByUUID(ctx context.Context, argUuid uuid.UUID) (Evenement, error) {
+	row := q.db.QueryRow(ctx, getEventByUUID, argUuid)
 	var i Evenement
 	err := row.Scan(
 		&i.ID,
@@ -70,14 +93,21 @@ func (q *Queries) GetEventByID(ctx context.Context, id int64) (Evenement, error)
 		&i.Categorie,
 		&i.PrixBillet,
 		&i.QuantiteBillet,
+		&i.Likes,
+		&i.Uuid,
 	)
 	return i, err
 }
 
 const getEventByUserEmail = `-- name: GetEventByUserEmail :many
-SELECT ev.id, ev.nom, ev.description, ev.debut_vente, ev.fin_vente, ev.date_evenement, ev.organisateur, ev.heure_evenement, ev.location_evenement, ev.chemin_photo, ev.categorie, ev.prix_billet, ev.quantite_billet FROM evenements ev
-LEFT JOIN users u ON ev.organisateur = u.id
-WHERE u.email = $1
+SELECT 
+  ev.id, ev.nom, ev.description, ev.debut_vente, ev.fin_vente, ev.date_evenement, ev.organisateur, ev.heure_evenement, ev.location_evenement, ev.chemin_photo, ev.categorie, ev.prix_billet, ev.quantite_billet, ev.likes, ev.uuid 
+FROM 
+  evenements ev
+LEFT JOIN 
+  users u ON ev.organisateur = u.id
+WHERE 
+  u.email = $1
 `
 
 func (q *Queries) GetEventByUserEmail(ctx context.Context, email pgtype.Text) ([]Evenement, error) {
@@ -103,6 +133,8 @@ func (q *Queries) GetEventByUserEmail(ctx context.Context, email pgtype.Text) ([
 			&i.Categorie,
 			&i.PrixBillet,
 			&i.QuantiteBillet,
+			&i.Likes,
+			&i.Uuid,
 		); err != nil {
 			return nil, err
 		}
@@ -116,8 +148,9 @@ func (q *Queries) GetEventByUserEmail(ctx context.Context, email pgtype.Text) ([
 
 const newEvent = `-- name: NewEvent :exec
 INSERT INTO 
-evenements (nom, description, debut_vente, fin_vente, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+  evenements (nom, description, debut_vente, fin_vente, organisateur, heure_evenement, location_evenement, chemin_photo, categorie, prix_billet, quantite_billet)
+VALUES 
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 `
 
 type NewEventParams struct {
@@ -147,6 +180,56 @@ func (q *Queries) NewEvent(ctx context.Context, arg NewEventParams) error {
 		arg.Categorie,
 		arg.PrixBillet,
 		arg.QuantiteBillet,
+	)
+	return err
+}
+
+const updateEventByUUID = `-- name: UpdateEventByUUID :exec
+UPDATE evenements
+SET
+  nom = $1,
+  description = $2,
+  debut_vente = $3,
+  fin_vente = $4,
+  organisateur = $5,
+  heure_evenement = $6,
+  location_evenement = $7,
+  chemin_photo = $8,
+  categorie = $9,
+  prix_billet = $10,
+  quantite_billet = $11
+WHERE uuid = $12
+`
+
+type UpdateEventByUUIDParams struct {
+	Nom               pgtype.Text      `json:"nom"`
+	Description       string           `json:"description"`
+	DebutVente        pgtype.Date      `json:"debut_vente"`
+	FinVente          pgtype.Date      `json:"fin_vente"`
+	Organisateur      int64            `json:"organisateur"`
+	HeureEvenement    pgtype.Timestamp `json:"heure_evenement"`
+	LocationEvenement pgtype.Text      `json:"location_evenement"`
+	CheminPhoto       pgtype.Text      `json:"chemin_photo"`
+	Categorie         pgtype.Text      `json:"categorie"`
+	PrixBillet        pgtype.Float8    `json:"prix_billet"`
+	QuantiteBillet    pgtype.Int4      `json:"quantite_billet"`
+	Uuid              uuid.UUID        `json:"uuid"`
+}
+
+func (q *Queries) UpdateEventByUUID(ctx context.Context, arg UpdateEventByUUIDParams) error {
+	_, err := q.db.Exec(ctx, updateEventByUUID,
+		arg.Nom,
+		arg.Description,
+		arg.DebutVente,
+		arg.FinVente,
+		arg.Organisateur,
+		arg.HeureEvenement,
+		arg.LocationEvenement,
+		arg.CheminPhoto,
+		arg.Categorie,
+		arg.PrixBillet,
+		arg.QuantiteBillet,
+		arg.Uuid,
 	)
 	return err
 }

@@ -1,245 +1,188 @@
 package admin
 
+import "github.com/dstm45/seed/pkg/views/component"
 
 templ Dashboard() {
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Dashboard | EventHub</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-</head>
-<body class="bg-gray-50">
-
-  <!-- Engaging Header -->
-  <header class="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white">
-    <div class="relative z-10 max-w-7xl mx-auto px-6 py-6 md:py-8 flex flex-col md:flex-row justify-between items-center">
-      <!-- Logo Section -->
-      <div class="mb-4 md:mb-0">
-        <a href="/" class="text-3xl font-extrabold tracking-wide hover:scale-105 transition-transform duration-300">
-          EventHub Admin
-        </a>
+@component.Base("admin", "Admin Dashboard | eventHub") {
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-6 py-12 space-y-12">
+  <!-- Dashboard Summary Section -->
+  <section>
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard Summary</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Connected Users Card -->
+      <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
+        <i class="fas fa-users fa-3x text-red-500"></i>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 mb-2">Connected Users</h2>
+          <p class="text-3xl font-extrabold text-red-500">120</p>
+        </div>
       </div>
-      <!-- Navigation Menu -->
-      <nav class="mb-4 md:mb-0">
-        <ul class="flex space-x-8 items-center text-lg">
-          <li>
-            <a href="/admin/dashboard" class="hover:text-gray-200 transition-colors duration-300">Dashboard</a>
-          </li>
-          <li>
-            <a href="/admin/users" class="hover:text-gray-200 transition-colors duration-300">Manage Users</a>
-          </li>
-          <li>
-            <a href="/admin/events" class="hover:text-gray-200 transition-colors duration-300">Manage Events</a>
-          </li>
-          <li>
-            <a href="/admin/settings" class="hover:text-gray-200 transition-colors duration-300">Settings</a>
-          </li>
-        </ul>
-      </nav>
-      <!-- Call-to-Action Button -->
-      <div>
-        <a href="/" class="bg-white text-red-500 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-gray-200 transition-all duration-300">
-          View Site
-        </a>
+      <!-- Ongoing Events Card -->
+      <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
+        <i class="fas fa-calendar-alt fa-3x text-red-500"></i>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 mb-2">Ongoing Events</h2>
+          <p class="text-3xl font-extrabold text-red-500">8</p>
+        </div>
       </div>
     </div>
-    <!-- Decorative Floating SVG -->
-    <div class="absolute right-0 bottom-0 md:bottom-10 opacity-70 float-animation">
-      <svg class="w-32 h-32 md:w-48 md:h-48" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <path fill="#FFCDD2" d="M42.3,-64.2C55.8,-56.7,67.8,-44.3,72.8,-29.3C77.8,-14.4,75.8,2.3,70.7,17.5C65.7,32.7,57.7,46.4,46.8,54.5C35.9,62.6,22.1,65.1,7.5,68.4C-7.1,71.7,-21.8,75.9,-34.3,73.3C-46.7,70.8,-57,61.4,-65.3,49.8C-73.6,38.2,-79.8,24.4,-83.2,9.9C-86.6,-4.6,-87.2,-20.8,-80.2,-33.9C-73.2,-47,-58.7,-57,-43.1,-64.7C-27.5,-72.4,-13.8,-77.7,1.6,-80.6C17,-83.4,34,-84.2,42.3,-64.2Z" transform="translate(100 100)" />
-      </svg>
+  </section>
+  <!-- System Overview Section (Additional Statistics) -->
+  <section>
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">System Overview</h1>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Total Registered Users Card -->
+      <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
+        <i class="fas fa-user-plus fa-3x text-red-500"></i>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 mb-2">Total Registered Users</h2>
+          <p class="text-3xl font-extrabold text-red-500">500</p>
+        </div>
+      </div>
+      <!-- Total Events Card -->
+      <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
+        <i class="fas fa-calendar-check fa-3x text-red-500"></i>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 mb-2">Total Events</h2>
+          <p class="text-3xl font-extrabold text-red-500">35</p>
+        </div>
+      </div>
+      <!-- Total Sales Card -->
+      <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
+        <i class="fas fa-dollar-sign fa-3x text-red-500"></i>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 mb-2">Total Sales</h2>
+          <p class="text-3xl font-extrabold text-red-500">$12K</p>
+        </div>
+      </div>
     </div>
-    <!-- Background Overlay for Depth -->
-    <div class="absolute inset-0 bg-black opacity-20"></div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="max-w-7xl mx-auto px-6 py-12 space-y-12">
-    
-    <!-- Dashboard Summary Section -->
-    <section>
-      <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard Summary</h1>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Connected Users Card -->
-        <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
-          <i class="fas fa-users fa-3x text-red-500"></i>
-          <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Connected Users</h2>
-            <p class="text-3xl font-extrabold text-red-500">120</p>
-          </div>
-        </div>
-        <!-- Ongoing Events Card -->
-        <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
-          <i class="fas fa-calendar-alt fa-3x text-red-500"></i>
-          <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Ongoing Events</h2>
-            <p class="text-3xl font-extrabold text-red-500">8</p>
-          </div>
-        </div>
+  </section>
+  <!-- Quick Actions Section -->
+  <section>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
+    <div class="flex flex-wrap gap-4">
+      <a href="/admin/users"
+        class="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-full shadow hover:opacity-90 transition-all duration-300 flex items-center space-x-2">
+        <i class="fas fa-users-cog"></i>
+        <span>Manage Users</span>
+      </a>
+      <a href="/admin/events"
+        class="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-full shadow hover:opacity-90 transition-all duration-300 flex items-center space-x-2">
+        <i class="fas fa-calendar-plus"></i>
+        <span>Manage Events</span>
+      </a>
+      <a href="/admin/settings"
+        class="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-full shadow hover:opacity-90 transition-all duration-300 flex items-center space-x-2">
+        <i class="fas fa-cogs"></i>
+        <span>System Settings</span>
+      </a>
+    </div>
+  </section>
+  <!-- Recent Activity Section -->
+  <section>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Activity</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white rounded-lg shadow">
+        <thead>
+          <tr>
+            <th class="py-3 px-6 bg-gray-100 text-left font-bold text-gray-700">Time</th>
+            <th class="py-3 px-6 bg-gray-100 text-left font-bold text-gray-700">Activity</th>
+            <th class="py-3 px-6 bg-gray-100 text-left font-bold text-gray-700">User</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-gray-200">
+            <td class="py-3 px-6">2025-07-20 14:23</td>
+            <td class="py-3 px-6">User 'JohnDoe' logged in</td>
+            <td class="py-3 px-6">JohnDoe</td>
+          </tr>
+          <tr class="border-t border-gray-200 bg-gray-50">
+            <td class="py-3 px-6">2025-07-20 14:50</td>
+            <td class="py-3 px-6">Created event: "Concert in the Park"</td>
+            <td class="py-3 px-6">Admin</td>
+          </tr>
+          <tr class="border-t border-gray-200">
+            <td class="py-3 px-6">2025-07-20 15:05</td>
+            <td class="py-3 px-6">User 'Mary123' logged in</td>
+            <td class="py-3 px-6">Mary123</td>
+          </tr>
+          <tr class="border-t border-gray-200 bg-gray-50">
+            <td class="py-3 px-6">2025-07-20 15:12</td>
+            <td class="py-3 px-6">Updated settings: Site Title changed</td>
+            <td class="py-3 px-6">Admin</td>
+          </tr>
+          <tr class="border-t border-gray-200">
+            <td class="py-3 px-6">2025-07-20 15:30</td>
+            <td class="py-3 px-6">User 'SamWilson' registered</td>
+            <td class="py-3 px-6">System</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <!-- Analytics Section -->
+  <section>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Analytics</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="p-6 bg-white shadow rounded-lg">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">User Registrations</h3>
+        <canvas id="userRegistrationsChart"></canvas>
       </div>
-    </section>
-
-    <!-- System Overview Section (Additional Statistics) -->
-    <section>
-      <h1 class="text-3xl font-bold text-gray-800 mb-6">System Overview</h1>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Total Registered Users Card -->
-        <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
-          <i class="fas fa-user-plus fa-3x text-red-500"></i>
-          <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Total Registered Users</h2>
-            <p class="text-3xl font-extrabold text-red-500">500</p>
-          </div>
-        </div>
-        <!-- Total Events Card -->
-        <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
-          <i class="fas fa-calendar-check fa-3x text-red-500"></i>
-          <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Total Events</h2>
-            <p class="text-3xl font-extrabold text-red-500">35</p>
-          </div>
-        </div>
-        <!-- Total Sales Card -->
-        <div class="p-6 bg-white shadow rounded-lg flex items-center space-x-4">
-          <i class="fas fa-dollar-sign fa-3x text-red-500"></i>
-          <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Total Sales</h2>
-            <p class="text-3xl font-extrabold text-red-500">$12K</p>
-          </div>
-        </div>
+      <div class="p-6 bg-white shadow rounded-lg">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Event Popularity</h3>
+        <canvas id="eventPopularityChart"></canvas>
       </div>
-    </section>
+    </div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Mock data for charts
+  const userRegistrationsData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    datasets: [{
+      label: 'New Users',
+      data: [65, 59, 80, 81, 56, 55],
+      fill: false,
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    }]
+  };
 
-    <!-- Quick Actions Section -->
-    <section>
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
-      <div class="flex flex-wrap gap-4">
-        <a href="/admin/users" class="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-full shadow hover:opacity-90 transition-all duration-300 flex items-center space-x-2">
-          <i class="fas fa-users-cog"></i>
-          <span>Manage Users</span>
-        </a>
-        <a href="/admin/events" class="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-full shadow hover:opacity-90 transition-all duration-300 flex items-center space-x-2">
-          <i class="fas fa-calendar-plus"></i>
-          <span>Manage Events</span>
-        </a>
-        <a href="/admin/settings" class="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-full shadow hover:opacity-90 transition-all duration-300 flex items-center space-x-2">
-          <i class="fas fa-cogs"></i>
-          <span>System Settings</span>
-        </a>
-      </div>
-    </section>
+  const eventPopularityData = {
+    labels: ['Event A', 'Event B', 'Event C', 'Event D', 'Event E'],
+    datasets: [{
+      label: 'Ticket Sales',
+      data: [300, 50, 100, 40, 120],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
 
-    <!-- Recent Activity Section -->
-    <section>
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Activity</h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full bg-white rounded-lg shadow">
-          <thead>
-            <tr>
-              <th class="py-3 px-6 bg-gray-100 text-left font-bold text-gray-700">Time</th>
-              <th class="py-3 px-6 bg-gray-100 text-left font-bold text-gray-700">Activity</th>
-              <th class="py-3 px-6 bg-gray-100 text-left font-bold text-gray-700">User</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-t border-gray-200">
-              <td class="py-3 px-6">2025-07-20 14:23</td>
-              <td class="py-3 px-6">User 'JohnDoe' logged in</td>
-              <td class="py-3 px-6">JohnDoe</td>
-            </tr>
-            <tr class="border-t border-gray-200 bg-gray-50">
-              <td class="py-3 px-6">2025-07-20 14:50</td>
-              <td class="py-3 px-6">Created event: "Concert in the Park"</td>
-              <td class="py-3 px-6">Admin</td>
-            </tr>
-            <tr class="border-t border-gray-200">
-              <td class="py-3 px-6">2025-07-20 15:05</td>
-              <td class="py-3 px-6">User 'Mary123' logged in</td>
-              <td class="py-3 px-6">Mary123</td>
-            </tr>
-            <tr class="border-t border-gray-200 bg-gray-50">
-              <td class="py-3 px-6">2025-07-20 15:12</td>
-              <td class="py-3 px-6">Updated settings: Site Title changed</td>
-              <td class="py-3 px-6">Admin</td>
-            </tr>
-             <tr class="border-t border-gray-200">
-              <td class="py-3 px-6">2025-07-20 15:30</td>
-              <td class="py-3 px-6">User 'SamWilson' registered</td>
-              <td class="py-3 px-6">System</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+  // Render charts
+  new Chart(document.getElementById('userRegistrationsChart'), {
+    type: 'line',
+    data: userRegistrationsData,
+  });
 
-    <!-- Analytics Section -->
-    <section>
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Analytics</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="p-6 bg-white shadow rounded-lg">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">User Registrations</h3>
-          <canvas id="userRegistrationsChart"></canvas>
-        </div>
-        <div class="p-6 bg-white shadow rounded-lg">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">Event Popularity</h3>
-          <canvas id="eventPopularityChart"></canvas>
-        </div>
-      </div>
-    </section>
-  </main>
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    // Mock data for charts
-    const userRegistrationsData = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-      datasets: [{
-        label: 'New Users',
-        data: [65, 59, 80, 81, 56, 55],
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      }]
-    };
-
-    const eventPopularityData = {
-      labels: ['Event A', 'Event B', 'Event C', 'Event D', 'Event E'],
-      datasets: [{
-        label: 'Ticket Sales',
-        data: [300, 50, 100, 40, 120],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)'
-        ],
-        borderWidth: 1
-      }]
-    };
-
-    // Render charts
-    new Chart(document.getElementById('userRegistrationsChart'), {
-      type: 'line',
-      data: userRegistrationsData,
-    });
-
-    new Chart(document.getElementById('eventPopularityChart'), {
-      type: 'bar',
-      data: eventPopularityData,
-    });
-  </script>
-</body>
-</html>
-
+  new Chart(document.getElementById('eventPopularityChart'), {
+    type: 'bar',
+    data: eventPopularityData,
+  });
+</script>
+}
 }

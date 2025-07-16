@@ -104,13 +104,11 @@ func (c *AuthController) SignUp(w http.ResponseWriter, r *http.Request) {
 // Logout handles user logout.
 func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodPost:
+	case http.MethodGet:
 		utils.DeleteToken(w)
 		http.Redirect(w, r, "/signin", http.StatusSeeOther)
+		return
 	default:
-		// Typically, logout should be a POST request to prevent accidental logouts
-		// from prefetched links. We'll disallow GET here.
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		component.MethodNotAllowed().Render(r.Context(), w)
 	}
 }

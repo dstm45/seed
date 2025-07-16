@@ -5,8 +5,29 @@
 package database
 
 import (
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type Abonnement struct {
+	ID         int64 `json:"id"`
+	Creatorid  int64 `json:"creatorid"`
+	Followerid int64 `json:"followerid"`
+}
+
+type Activite struct {
+	ID            int64              `json:"id"`
+	Type          string             `json:"type"`
+	ResponsableID int64              `json:"responsable_id"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+}
+
+type Commentaire struct {
+	ID          int64  `json:"id"`
+	UserID      int64  `json:"user_id"`
+	EvenementID int64  `json:"evenement_id"`
+	Comment     string `json:"comment"`
+}
 
 type Evenement struct {
 	ID                int64            `json:"id"`
@@ -22,6 +43,8 @@ type Evenement struct {
 	Categorie         pgtype.Text      `json:"categorie"`
 	PrixBillet        pgtype.Float8    `json:"prix_billet"`
 	QuantiteBillet    pgtype.Int4      `json:"quantite_billet"`
+	Likes             int32            `json:"likes"`
+	Uuid              uuid.UUID        `json:"uuid"`
 }
 
 type User struct {
@@ -34,4 +57,6 @@ type User struct {
 	Pseudonyme   pgtype.Text `json:"pseudonyme"`
 	Description  pgtype.Text `json:"description"`
 	CheminPhoto  pgtype.Text `json:"chemin_photo"`
+	Uuid         uuid.UUID   `json:"uuid"`
+	OnlineStatus bool        `json:"online_status"`
 }

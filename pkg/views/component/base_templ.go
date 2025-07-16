@@ -29,11 +29,12 @@ func Base(role, title string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<html lang=\"fr\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Sign In | EventHub</title><link rel=\"stylesheet\" href=\"/static/css/output.css\"><link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\"><script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css\"><style>\n        #map {\n            height: 400px;\n            border-radius: 0.5rem;\n        }\n\n        .hover-scale:hover {\n            transform: scale(1.05);\n        }\n    </style><script>\n        tailwind.config = {\n            theme: {\n                extend: {\n                    colors: {\n                        background: 'hsl(0 0% 100%)',\n                        foreground: 'hsl(222.2 84% 4.9%)',\n                        card: 'hsl(0 0% 100%)',\n                        'card-foreground': 'hsl(222.2 84% 4.9%)',\n                        primary: 'hsl(222.2 47.4% 11.2%)',\n                        'primary-foreground': 'hsl(210 40% 98%)',\n                        secondary: 'hsl(210 40% 96.1%)',\n                        'secondary-foreground': 'hsl(222.2 47.4% 11.2%)',\n                        muted: 'hsl(210 40% 96.1%)',\n                        'muted-foreground': 'hsl(215.4 16.3% 46.9%)',\n                        accent: 'hsl(210 40% 96.1%)',\n                        'accent-foreground': 'hsl(222.2 47.4% 11.2%)',\n                        destructive: 'hsl(0 84.2% 60.2%)',\n                        'destructive-foreground': 'hsl(210 40% 98%)',\n                        border: 'hsl(214.3 31.8% 91.4%)',\n                        input: 'hsl(214.3 31.8% 91.4%)',\n                        ring: 'hsl(222.2 84% 4.9%)',\n                    },\n                    keyframes: {\n                        'fade-in': {\n                            '0%': {opacity: '0', transform: 'translateY(10px)'},\n                            '100%': {opacity: '1', transform: 'translateY(0)'}\n                        }\n                    },\n                    animation: {\n                        'fade-in': 'fade-in 0.3s ease-out'\n                    }\n                }\n            }\n        }\n    </script></head>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<html lang=\"fr\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Sign In | EventHub</title><link rel=\"stylesheet\" href=\"/static/css/output.css\"><link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\"><script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css\"><style>\n        #map {\n            height: 400px;\n            border-radius: 0.5rem;\n        }\n\n        .hover-scale:hover {\n            transform: scale(1.05);\n        }\n    </style></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if role == "login" {
+		switch role {
+		case "login":
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<body class=\"bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 min-h-screen flex items-center justify-center\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -46,8 +47,16 @@ func Base(role, title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		} else if role == "admin" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<body class=\"bg-gray-50\"><!-- Engaging Header -->AdminHeader()<!-- Main Content -->")
+		case "admin":
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<body class=\"bg-gray-50\"><!-- Engaging Header -->")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = AdminHeader().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<!-- Main Content -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -55,12 +64,12 @@ func Base(role, title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</body>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</body>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<body class=\"min-h-screen flex flex-col bg-gray-100\">")
+		default:
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<body class=\"min-h-screen flex flex-col bg-gray-100\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -68,7 +77,7 @@ func Base(role, title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<main class=\"flex-grow\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<main class=\"flex-grow\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -76,12 +85,12 @@ func Base(role, title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</main></body>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</main></body>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

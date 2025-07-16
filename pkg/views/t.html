@@ -1,7 +1,236 @@
-<body class="bg-gradient-to-br from-gray-50 to-gray-100">
-    <!-- Header -->
+<html lang="fr">
 
-    <!-- Main Content -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profil | EventHub</title>
+  <link rel="stylesheet" href="/static/css/output.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    .hover-scale:hover {
+      transform: scale(1.05);
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: "hsl(0 0% 100%)",
+            foreground: "hsl(222.2 84% 4.9%)",
+            card: "hsl(0 0% 100%)",
+            "card-foreground": "hsl(222.2 84% 4.9%)",
+            primary: "hsl(222.2 47.4% 11.2%)",
+            "primary-foreground": "hsl(210 40% 98%)",
+            secondary: "hsl(210 40% 96.1%)",
+            "secondary-foreground": "hsl(222.2 47.4% 11.2%)",
+            muted: "hsl(210 40% 96.1%)",
+            "muted-foreground": "hsl(215.4 16.3% 46.9%)",
+            accent: "hsl(210 40% 96.1%)",
+            "accent-foreground": "hsl(222.2 47.4% 11.2%)",
+            destructive: "hsl(0 84.2% 60.2%)",
+            "destructive-foreground": "hsl(210 40% 98%)",
+            border: "hsl(214.3 31.8% 91.4%)",
+            input: "hsl(214.3 31.8% 91.4%)",
+            ring: "hsl(222.2 84% 4.9%)"
+          },
+          keyframes: {
+            "fade-in": {
+              "0%": {opacity: "0", transform: "translateY(10px)"},
+              "100%": {opacity: "1", transform: "translateY(0)"}
+            }
+          },
+          animation: {
+            "fade-in": "fade-in 0.3s ease-out"
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-100">
+  <!-- Navbar -->
+  <header class="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white">
+    <div
+      class="relative z-10 max-w-7xl mx-auto px-6 py-6 md:py-8 flex flex-col md:flex-row justify-between items-center">
+      <div class="mb-4 md:mb-0">
+        <a href="/"
+          class="text-3xl font-extrabold tracking-wide hover:scale-105 transition-transform duration-300">EventHub</a>
+      </div>
+      <nav class="mb-4 md:mb-0">
+        <ul class="flex space-x-8 items-center text-lg">
+          <li><a href="#concerts" class="hover:text-gray-200 transition-colors">Concerts</a></li>
+          <li><a href="#shows" class="hover:text-gray-200 transition-colors">Spectacles</a></li>
+          <li><a href="#seminars" class="hover:text-gray-200 transition-colors">Séminaires</a></li>
+          <li><a href="/logout" class="hover:text-gray-200 transition-colors">Se déconnecter</a></li>
+        </ul>
+      </nav>
+      <div>
+        <a href="/buy-tickets"
+          class="bg-white text-red-500 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-gray-200 transition-all duration-300">Acheter
+          Billets</a>
+      </div>
+    </div>
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+  </header>
+
+  <!-- Profile Section -->
+  <main class="flex-grow">
+    <div class="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <!-- User Info Card -->
+      {{ $u := .User }}
+      <section class="bg-white rounded-lg shadow-lg overflow-hidden animate-fade-in">
+        <div class="p-6 flex flex-col md:flex-row items-center gap-6 border-b">
+          <img src="{{ $u.CheminPhoto.String }}" alt="{{ $u.Pseudonyme.String }}"
+            class="w-32 h-32 rounded-full border-4 border-purple-200 object-cover" />
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ $u.Pseudonyme.String }}</h2>
+            <p class="text-muted-foreground mb-4">{{ $u.Description.String }}</p>
+            <div class="flex gap-8">
+              <div class="text-center">
+                <p class="text-lg font-semibold text-purple-600">{{ $u.Followers }}</p>
+                <p class="text-sm text-gray-500">Abonnés</p>
+              </div>
+              <div class="text-center">
+                <p class="text-lg font-semibold text-pink-600">{{ len .Events }}</p>
+                <p class="text-sm text-gray-500">Événements</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Organized Events -->
+      <section class="space-y-6">
+        {{ range .Events }}
+        <div
+          class="event-card concerts overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white rounded-lg border bg-card text-card-foreground shadow-sm">
+          <!-- Organizer Header -->
+          {{ $organisateur, _ := DB.GetUserByID context.Background .Organisateur }}
+          <div class="p-4 border-b">
+            <div class="flex items-center space-x-3">
+              <img src="{{ $organisateur.CheminPhoto.String }}" alt="{{ $organisateur.Pseudonyme.String }}"
+                class="w-12 h-12 rounded-full object-cover border-2 border-purple-200" />
+              <div class="flex-1">
+                <div class="flex items-center space-x-2">
+                  <h3 class="font-semibold text-gray-800 hover:text-purple-600 cursor-pointer transition-colors">
+                    {{ $organisateur.Pseudonyme.String }}
+                  </h3>
+                  <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <p class="text-sm text-gray-500">{{ $organisateur.Description.String }}</p>
+              </div>
+              <button
+                class="text-purple-600 hover:text-purple-700 font-medium text-sm hover:bg-purple-50 px-3 py-1 rounded-lg transition-all">
+                Suivre
+              </button>
+            </div>
+          </div>
+
+          <!-- Event Hero -->
+          <div class="relative">
+            <img src="{{ .CheminPhoto.String }}" alt="{{ .Nom.String }}" class="w-full h-64 md:h-80 object-cover" />
+            <div class="absolute top-4 left-4">
+              <span class="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">{{
+                .Categorie.String }}</span>
+            </div>
+            <div class="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white px-3 py-2 rounded-lg">
+              <span class="text-2xl font-bold">{{ .PrixBillet.Float64 }}$</span>
+            </div>
+          </div>
+
+          <div class="p-6 pt-0">
+            <h2 class="text-2xl font-bold text-gray-800 mb-3 hover:text-purple-600 transition-colors cursor-pointer">
+              {{ .Nom.String }}
+            </h2>
+            <p class="text-gray-600 mb-4 leading-relaxed">{{ .Description }}</p>
+
+            <!-- Details -->
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center text-gray-700">
+                <svg class="mr-3 h-5 w-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="font-medium">{{ .DateEvenement.Time.Format "02 Jan 2006" }} à 18:00</span>
+              </div>
+              <div class="flex items-center text-gray-700">
+                <svg class="mr-3 h-5 w-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>{{ .LocationEvenement.String }}</span>
+              </div>
+              <div class="flex items-center text-gray-700">
+                <svg class="mr-3 h-5 w-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>{{ .InterestedCount }} personnes intéressées</span>
+              </div>
+            </div>
+
+            <!-- CTAs -->
+            <div class="flex flex-col sm:flex-row gap-3 mb-4">
+              <button
+                class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                Acheter Billets – {{ .PrixBillet.Float64 }}$
+              </button>
+              <button
+                class="flex-1 border-purple-300 text-purple-600 hover:bg-purple-50 py-3 px-6 rounded-lg transition-all duration-300 border border-input bg-background hover:bg-accent hover:text-accent-foreground">
+                Intéressé(e)
+              </button>
+            </div>
+
+            <!-- Social & Timestamp -->
+            <div class="border-t pt-4">
+              <div class="flex justify-between items-center">
+                <div class="flex space-x-6">
+                  <button onclick="likeEvent(this)"
+                    class="flex items-center space-x-2 text-gray-600 hover:text-red-500 hover:bg-red-50 transition-all duration-200 inline-flex text-sm h-9 rounded-md px-3">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                      </path>
+                    </svg>
+                    <span class="like-count">{{ .Likes }}</span>
+                  </button>
+
+                  <button
+                    class="flex items-center space-x-2 text-gray-600 hover:text-blue-500 hover:bg-blue-50 transition-all duration-200 inline-flex text-sm h-9 rounded-md px-3">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>{{ .Comments }}</span>
+                  </button>
+
+                  <button onclick="shareEvent(this)"
+                    class="flex items-center space-x-2 text-gray-600 hover:text-green-500 hover:bg-green-50 transition-all duration-200 inline-flex text-sm h-9 rounded-md px-3">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                      <polyline points="16,6 12,2 8,6"></polyline>
+                      <line x1="12" y1="2" x2="12" y2="15"></line>
+                    </svg>
+                    <span class="share-count">{{ .Shares }}</span>
+                  </button>
+                </div>
+                <div class="text-sm text-gray-500">{{ .CreatedAt.Humanize }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{ end }}
+      </section>
+    </div>
+  </main>
 </body>
 
 </html>
+```

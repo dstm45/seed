@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"github.com/dstm45/seed/pkg/database"
@@ -41,30 +40,12 @@ func (c UserController) Index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c UserController) Event(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-	if err != nil {
-		utils.AfficherErreur("Erreur lors de la recupération de l'id ", err)
-		return
-	}
-	evenement, err := c.DB.GetEventByID(r.Context(), id)
-	if err != nil {
-		utils.AfficherErreur("Erreur lors du retrait de l'évenement dans la base de données", err)
-		return
-	}
-	template := user.Evenement(evenement)
-	template.Render(r.Context(), w)
-}
-
-func (c UserController) EditProfile(w http.ResponseWriter, r *http.Request) {
+func (c UserController) Editer(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		userInfo := utils.DecodeToken(r)
 		utilisateur, err := c.DB.GetUserByEmail(r.Context(), pgtype.Text{String: userInfo.Email, Valid: true})
 		if err != nil {
-			utils.AfficherErreur("Erreur lors du retrait de l'utilisateur dans la base de données", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
 		}
 		template := user.EditUser(utilisateur)
 		template.Render(r.Context(), w)
@@ -149,7 +130,7 @@ func (c UserController) EditProfile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c UserController) EditPassword(w http.ResponseWriter, r *http.Request) {
+func (c UserController) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		template := user.ChangePassword()
@@ -177,50 +158,6 @@ func (c UserController) EditPassword(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		http.Redirect(w, r, "/index", http.StatusSeeOther)
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		template := component.MethodNotAllowed()
-		err := template.Render(r.Context(), w)
-		if err != nil {
-			utils.AfficherErreur("Erreur lors du rendu dans la fontion controller", err)
-			return
-		}
-	}
-}
-
-func (c UserController) ShowEvent(w http.ResponseWriter, r *http.Request) {
-	evenements, err := c.DB.GetAllEvent(r.Context())
-	if err != nil {
-		utils.AfficherErreur("Erreur lors du retrait des utilisateur dans la base de données dans la fonction show event", err)
-		return
-	}
-	if err != nil {
-		utils.AfficherErreur("Erreur lors du retrait de l'utilisateur dans la base de données", err)
-		return
-	}
-	template := user.Liste(c.DB, evenements)
-	err = template.Render(r.Context(), w)
-	if err != nil {
-		utils.AfficherErreur("Erreur lors du rendu de la fonction showevent", err)
-		return
-	}
-}
-
-func (c UserController) AddEvent(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		template := user.AddEvent()
-		err := template.Render(r.Context(), w)
-		if err != nil {
-			utils.AfficherErreur("Erreur lors du rendu de la page addevent", err)
-			return
-		}
-	case http.MethodPost:
-		err := r.ParseMultipartForm(10 << 20)
-		if err != nil {
-			utils.AfficherErreur("Erreur lors du traitement du formulaire dans la fonction addevent", err)
-			return
-		}
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		template := component.MethodNotAllowed()

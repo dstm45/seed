@@ -12,7 +12,12 @@ import (
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo FROM users WHERE email = $1
+SELECT 
+  id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo, uuid, online_status 
+FROM 
+  users 
+WHERE 
+  email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email pgtype.Text) (User, error) {
@@ -28,12 +33,19 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email pgtype.Text) (User, 
 		&i.Pseudonyme,
 		&i.Description,
 		&i.CheminPhoto,
+		&i.Uuid,
+		&i.OnlineStatus,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo FROM users WHERE id=$1
+SELECT 
+  id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo, uuid, online_status 
+FROM 
+  users 
+WHERE 
+  id=$1
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id int64) (User, error) {
@@ -49,14 +61,18 @@ func (q *Queries) GetUserByID(ctx context.Context, id int64) (User, error) {
 		&i.Pseudonyme,
 		&i.Description,
 		&i.CheminPhoto,
+		&i.Uuid,
+		&i.OnlineStatus,
 	)
 	return i, err
 }
 
 const newUser = `-- name: NewUser :one
-INSERT INTO users (nom, prenom, email, password_hash, pseudonyme)
-VALUES($1, $2, $3, $4, $5)
-RETURNING id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo
+INSERT INTO 
+  users (nom, prenom, email, password_hash, pseudonyme)
+VALUES
+  ($1, $2, $3, $4, $5)
+RETURNING id, nom, prenom, email, type_compte, password_hash, pseudonyme, description, chemin_photo, uuid, online_status
 `
 
 type NewUserParams struct {
@@ -86,14 +102,22 @@ func (q *Queries) NewUser(ctx context.Context, arg NewUserParams) (User, error) 
 		&i.Pseudonyme,
 		&i.Description,
 		&i.CheminPhoto,
+		&i.Uuid,
+		&i.OnlineStatus,
 	)
 	return i, err
 }
 
 const updateDescription = `-- name: UpdateDescription :exec
 UPDATE users 
-SET nom = $1, prenom=$2, description=$3, chemin_photo=$4, pseudonyme=$5
-WHERE email=$6
+SET 
+  nom = $1,
+  prenom=$2,
+  description=$3,
+  chemin_photo=$4,
+  pseudonyme=$5
+WHERE 
+  email=$6
 `
 
 type UpdateDescriptionParams struct {
@@ -118,9 +142,12 @@ func (q *Queries) UpdateDescription(ctx context.Context, arg UpdateDescriptionPa
 }
 
 const updatePassword = `-- name: UpdatePassword :exec
-UPDATE users
-SET password_hash = $1
-WHERE email=$2
+UPDATE 
+  users
+SET 
+  password_hash = $1
+WHERE 
+  email=$2
 `
 
 type UpdatePasswordParams struct {

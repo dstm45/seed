@@ -30,8 +30,8 @@ func (c *AdminController) Dashboard(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ManageUsers handles the rendering of the user management page.
-func (c *AdminController) ManageUsers(w http.ResponseWriter, r *http.Request) {
+// Users handles the rendering of the user management page.
+func (c *AdminController) Users(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		template := admin.ManageUsers()
@@ -46,8 +46,8 @@ func (c *AdminController) ManageUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ManageEvents handles the rendering of the event management page.
-func (c *AdminController) ManageEvents(w http.ResponseWriter, r *http.Request) {
+// Events handles the rendering of the event management page.
+func (c *AdminController) Events(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		template := admin.ManageEvent()
